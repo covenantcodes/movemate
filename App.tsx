@@ -6,8 +6,6 @@ import { PulseIndicator } from "react-native-indicators";
 import colors from "./utils/colors";
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
-
   const [fontsLoaded] = useFonts({
     DMSansThin: require("./assets/fonts/DMSans-Thin.ttf"),
     DMSansThinItalic: require("./assets/fonts/DMSans-ThinItalic.ttf"),
@@ -22,7 +20,7 @@ export default function App() {
     DMSansExtraBoldItalic: require("./assets/fonts/DMSans-ExtraBoldItalic.ttf"),
   });
 
-  if (!fontsLoaded || isLoading) {
+  if (!fontsLoaded) {
     return (
       <View style={styles.loadingContainer}>
         <PulseIndicator color={colors.primaryBg} />
