@@ -1,19 +1,9 @@
-import { StyleSheet, View, Platform } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useFonts } from "expo-font";
 import { PulseIndicator } from "react-native-indicators";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { StatusBar } from "expo-status-bar";
 
 import colors from "./utils/colors";
-import HomeScreen from "./screens/Home/Home";
-import CalculateScreen from "./screens/Calculate/Calculate";
-import ShipmentsScreen from "./screens/Shipments/Shipments";
-import ProfileScreen from "./screens/Profile/Profile";
-import { FONTFAMILY } from "./utils/fonts";
-import CustomTabBar from "./components/CustomTabBar";
-
-const Tab = createBottomTabNavigator();
+import AppNavigator from "./navigation/AppNavigator";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -38,26 +28,7 @@ export default function App() {
     );
   }
 
-  return (
-    <NavigationContainer>
-      <StatusBar style="auto" />
-      <Tab.Navigator
-        screenOptions={{
-          headerShown: false,
-          tabBarStyle: {
-            height: 0,
-            display: "none",
-          },
-        }}
-        tabBar={(props) => <CustomTabBar {...props} />}
-      >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Calculate" component={CalculateScreen} />
-        <Tab.Screen name="Shipment" component={ShipmentsScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
-  );
+  return <AppNavigator />;
 }
 
 const styles = StyleSheet.create({

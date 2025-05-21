@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   indicatorInner: {
-    width: 70,
+    width: 100,
     height: 3,
     backgroundColor: colors.primaryColor,
     borderRadius: 2,
