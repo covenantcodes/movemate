@@ -43,4 +43,12 @@ interface TrackingCardProps {
   onPress?: () => void;
 }
 
-export type { Shipment, IconProps, PulseIndicatorProps, UserData, TrackingCardProps };
+interface Vehicle {
+  id: string;
+  title: string;
+  route: string;
+  image: ImageSourcePropType;
+  color: string;
+}
+
+export type { Shipment, IconProps, PulseIndicatorProps, UserData, TrackingCardProps, Vehicle };

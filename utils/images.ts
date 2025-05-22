@@ -5,6 +5,9 @@ const images = {
     forkLift: require('../assets/images/forkLift.png'),
     send: require('../assets/images/new send.png'),
     receive: require('../assets/images/receive.png'),
+    ship: require('../assets/images/ship.png'),
+    truck: require('../assets/images/truck.png'),
+    airplane: require('../assets/images/airplane.png'),
 }
 
 export default images;
