@@ -5,9 +5,11 @@ import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import Entypo from "react-native-vector-icons/Entypo";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Octicons from "react-native-vector-icons/Octicons";
+
 
 // Export all icon packs with proper typing
 const Icons = {
@@ -17,6 +19,7 @@ const Icons = {
   Ionicons,
   FontAwesome,
   FontAwesome5,
+  FontAwesome6,
   Entypo,
   AntDesign,
   Octicons,
@@ -34,9 +37,9 @@ export const IconMap = {
   profile: { pack: "MaterialCommunityIcons", name: "account-outline" },
   
   // Header icons
-  location: { pack: "MaterialIcons", name: "location-on" },
+  location: { pack: "FontAwesome5", name: "location-arrow" },
   arrowDown: { pack: "MaterialIcons", name: "keyboard-arrow-down" },
-  bell: { pack: "Feather", name: "bell" },
+  bell: { pack: "MaterialCommunityIcons", name: "bell-outline" },
   search: { pack: "MaterialIcons", name: "search" },
   barcodeScan: { pack: "MaterialCommunityIcons", name: "barcode-scan" },
 } as const;

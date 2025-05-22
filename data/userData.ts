@@ -12,7 +12,7 @@ const userData: UserData = {
   name: "John Doe",
   profilePicture: require("../assets/images/profile-photo.png"),
   location: "Wertheimer, Illinois",
-  hasNewNotifications: true,
+  hasNewNotifications: false,
 };
 
 export default userData;

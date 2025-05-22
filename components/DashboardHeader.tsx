@@ -24,34 +24,34 @@ const DashboardHeader = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
 
-      {/* Purple background header */}
       <View style={styles.headerBackground}>
-        {/* Top row with profile, location and notification */}
         <View style={styles.topRow}>
-          {/* Profile and location */}
           <View style={styles.profileSection}>
             <Image
               source={userData.profilePicture}
               style={styles.profilePhoto}
             />
 
-            <TouchableOpacity style={styles.locationContainer}>
-              <Icon name="location" size={18} color={colors.white} />
-              <Text style={styles.locationText}>{userData.location}</Text>
-              <Icon name="arrowDown" size={18} color={colors.white} />
-            </TouchableOpacity>
+            <View style={styles.locationMainContainer}>
+              <View style={styles.locationTextContainer}>
+                <Icon name="location" size={13} color={colors.gray6} />
+                <Text style={styles.yourLocationText}>Your location</Text>
+              </View>
+              <TouchableOpacity style={styles.locationContainer}>
+                <Text style={styles.locationText}>{userData.location}</Text>
+                <Icon name="arrowDown" size={18} color={colors.white} />
+              </TouchableOpacity>
+            </View>
           </View>
 
-          {/* Notification bell */}
           <TouchableOpacity style={styles.notificationButton}>
             {userData.hasNewNotifications && (
               <View style={styles.notificationDot} />
             )}
-            <Icon name="bell" size={20} color={colors.primaryColor} />
+            <Icon name="bell" size={29} color={colors.black} />
           </TouchableOpacity>
         </View>
 
-        {/* Search bar */}
         <View style={styles.searchSection}>
           <View style={styles.searchBar}>
             <Icon
@@ -65,13 +65,13 @@ const DashboardHeader = () => {
               placeholder="Enter the receipt number..."
               placeholderTextColor={colors.gray}
             />
+            {/* Integrated scan button */}
+            <TouchableOpacity style={styles.integratedScanButton}>
+              <View style={styles.scanButtonInner}>
+                <Icon name="barcodeScan" size={18} color={colors.white} />
+              </View>
+            </TouchableOpacity>
           </View>
-
-          <TouchableOpacity style={styles.scanButton}>
-            <View style={styles.scanButtonInner}>
-              <Icon name="barcodeScan" size={18} color={colors.white} />
-            </View>
-          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: Platform.OS === "ios" ? 10 : 40,
+    marginTop: Platform.OS === "ios" ? 20 : 60,
     marginBottom: 16,
   },
   profileSection: {
@@ -99,12 +99,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profilePhoto: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     marginRight: 10,
-    borderWidth: 2,
-    borderColor: colors.white,
+  },
+  locationMainContainer: {},
+  locationTextContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  yourLocationText: {
+    color: colors.gray6,
+    marginLeft: 4,
+    fontFamily: FONTFAMILY.regular,
+    fontSize: FONTSIZE.md,
   },
   locationContainer: {
     flexDirection: "row",
@@ -113,14 +123,14 @@ const styles = StyleSheet.create({
   locationText: {
     color: colors.white,
     fontFamily: FONTFAMILY.medium,
-    fontSize: FONTSIZE.sm,
+    fontSize: FONTSIZE.md,
     marginHorizontal: 4,
   },
   notificationButton: {
     backgroundColor: colors.white,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
@@ -139,6 +149,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    marginTop: 10,
   },
   searchBar: {
     flexDirection: "row",
@@ -146,9 +157,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: 30,
     paddingVertical: Platform.OS === "ios" ? 12 : 8,
-    paddingHorizontal: 15,
+    paddingLeft: 15,
+    paddingRight: 8,
     flex: 1,
-    marginRight: 10,
+    position: "relative",
   },
   searchIcon: {
     marginRight: 8,
@@ -156,23 +168,24 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontFamily: FONTFAMILY.regular,
-    fontSize: FONTSIZE.sm,
+    fontSize: FONTSIZE.md,
     color: colors.black,
     paddingVertical: 0,
+    marginRight: 8, // Give some breathing room before the scan button
   },
-  scanButton: {
+  integratedScanButton: {
     backgroundColor: colors.secondaryColor,
-    height: 48,
-    width: 48,
-    borderRadius: 24,
+    height: 40,
+    width: 40,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
   },
   scanButtonInner: {
     backgroundColor: "rgba(255,255,255,0.3)",
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     justifyContent: "center",
     alignItems: "center",
   },
