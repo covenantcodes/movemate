@@ -51,4 +51,17 @@ interface Vehicle {
   color: string;
 }
 
-export type { Shipment, IconProps, PulseIndicatorProps, UserData, TrackingCardProps, Vehicle };
+interface VehicleCardProps {
+  vehicle: Vehicle;
+  onPress?: () => void;
+  isVisible?: boolean;
+  delay?: number;
+}
+
+interface DashboardHeaderProps {
+  onSearchFocus: () => void;
+  searchData?: any[];
+}
+
+
+export type { Shipment, IconProps, PulseIndicatorProps, UserData, TrackingCardProps, Vehicle, VehicleCardProps, DashboardHeaderProps };

@@ -48,6 +48,8 @@ export const IconMap = {
   receiver: { pack: "MaterialIcons", name: "arrow-circle-down" },
   plus: { pack: "Feather", name: "plus" },
   history: { pack: "MaterialIcons", name: "history" },
+  package: { pack: "Feather", name: "package" },
+  arrowLeft: { pack: "MaterialIcons", name: "chevron-left" },
 } as const;
 
 

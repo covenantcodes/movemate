@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   ScrollView,
   Animated,
   Easing,
+  FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from "react-native";
@@ -14,9 +15,25 @@ import { FONTFAMILY, FONTSIZE } from "../../utils/fonts";
 import DashboardHeader from "../../components/DashboardHeader";
 import TrackingCard from "../../components/TrackingCard";
 import VehicleCard from "../../components/VehicleCard";
+import SearchResultItem from "../../components/SearchResultItem";
 import { shipments, vehicles } from "../../data/data";
 
+// Extended data for search results with product names
+const searchData = shipments.map((shipment) => ({
+  ...shipment,
+  productName: [
+    "iPhone 13 Pro Max",
+    "MacBook Pro M1",
+    "PlayStation 5",
+    "Samsung TV",
+  ][Math.floor(Math.random() * 4)], // Just for demo, assign random product names
+}));
+
 const HomeScreen = () => {
+  // State for search results
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearchActive, setIsSearchActive] = useState(false);
+
   // Animation values for each card
   const cardAnimations = useRef(
     shipments.map(() => ({
@@ -28,6 +45,9 @@ const HomeScreen = () => {
   // Animation for the "Tracking" section header
   const trackingTextY = useRef(new Animated.Value(40)).current;
   const trackingTextOpacity = useRef(new Animated.Value(0)).current;
+
+  // Animation for search results
+  const searchResultsOpacity = useRef(new Animated.Value(0)).current;
 
   // Reference for ScrollView to track scroll position
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -44,8 +64,31 @@ const HomeScreen = () => {
     }))
   ).current;
 
+  // Function to handle search results
+  const handleSearchResults = (results: any[]) => {
+    setSearchResults(results);
+    setIsSearchActive(results.length > 0);
+
+    if (results.length > 0) {
+      // Fade in search results, fade out other content
+      Animated.timing(searchResultsOpacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      // Fade out search results
+      Animated.timing(searchResultsOpacity, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
   // Function to start the animations
   const animateContent = () => {
+    // Animation sequences as before...
     // First animate the "Available vehicles" section header
     Animated.parallel([
       Animated.timing(vehiclesSectionY, {
@@ -125,7 +168,7 @@ const HomeScreen = () => {
     {
       useNativeDriver: true,
       listener: (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-        // You can add additional logic here if needed
+        // Additional scroll logic if needed
       },
     }
   );
@@ -135,100 +178,122 @@ const HomeScreen = () => {
     animateContent();
   }, []);
 
-  const handleVehiclePress = (vehicleId: string) => {
-    console.log(`Vehicle pressed: ${vehicleId}`);
-    // Handle vehicle selection
+  const handleResultPress = (id: string) => {
+    console.log(`Search result pressed: ${id}`);
+    // Navigate to shipment details or handle the press
   };
 
   const handleAddStop = (shipmentId: string) => {
     console.log(`Add stop pressed for shipment ${shipmentId}`);
-    // Handle adding a stop
   };
 
   const handleCardPress = (shipmentId: string) => {
     console.log(`Card pressed for shipment ${shipmentId}`);
-    // Navigate to shipment details
+  };
+
+  const handleVehiclePress = (vehicleId: string) => {
+    console.log(`Vehicle pressed: ${vehicleId}`);
   };
 
   return (
     <View style={styles.container}>
-      <DashboardHeader />
+      <DashboardHeader
+        onSearchResults={handleSearchResults}
+        searchData={searchData}
+      />
 
-      <Animated.ScrollView
-        ref={scrollViewRef}
-        style={styles.scrollView}
-        contentContainerStyle={styles.contentContainer}
-        showsVerticalScrollIndicator={false}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-      >
-        {/* Tracking Section */}
+      {/* Search Results - Show when search is active */}
+      {isSearchActive ? (
         <Animated.View
-          style={[
-            styles.sectionHeader,
-            {
-              opacity: trackingTextOpacity,
-              transform: [{ translateY: trackingTextY }],
-              marginTop: 24,
-            },
-          ]}
+          style={[styles.searchResults, { opacity: searchResultsOpacity }]}
         >
-          <Text style={styles.sectionTitle}>Tracking</Text>
+          <FlatList
+            data={searchResults}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <SearchResultItem item={item} onPress={handleResultPress} />
+            )}
+            contentContainerStyle={styles.searchResultsContent}
+          />
         </Animated.View>
-
-        {shipments.map((shipment, index) => (
+      ) : (
+        // Normal Content - Show when search is not active
+        <Animated.ScrollView
+          ref={scrollViewRef}
+          style={styles.scrollView}
+          contentContainerStyle={styles.contentContainer}
+          showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+        >
+          {/* Tracking Section */}
           <Animated.View
-            key={shipment.id}
             style={[
-              styles.cardContainer,
+              styles.sectionHeader,
               {
-                opacity: cardAnimations[index].opacity,
-                transform: [{ translateY: cardAnimations[index].translateY }],
+                opacity: trackingTextOpacity,
+                transform: [{ translateY: trackingTextY }],
               },
             ]}
           >
-            <TrackingCard
-              shipment={shipment}
-              onAddStop={() => handleAddStop(shipment.id)}
-              onPress={() => handleCardPress(shipment.id)}
-            />
+            <Text style={styles.sectionTitle}>Tracking</Text>
           </Animated.View>
-        ))}
 
-        {/* Available Vehicles Section */}
-        <Animated.View
-          style={[
-            styles.sectionHeader,
-            {
-              opacity: vehiclesSectionOpacity,
-              transform: [{ translateY: vehiclesSectionY }],
-            },
-          ]}
-        >
-          <Text style={styles.sectionTitle}>Available vehicles</Text>
-        </Animated.View>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.vehiclesContainer}
-        >
-          {vehicles.map((vehicle, index) => (
+          {shipments.map((shipment, index) => (
             <Animated.View
-              key={vehicle.id}
-              style={{
-                opacity: vehicleAnimations[index].opacity,
-                transform: [{ scale: vehicleAnimations[index].scale }],
-              }}
+              key={shipment.id}
+              style={[
+                styles.cardContainer,
+                {
+                  opacity: cardAnimations[index].opacity,
+                  transform: [{ translateY: cardAnimations[index].translateY }],
+                },
+              ]}
             >
-              <VehicleCard
-                vehicle={vehicle}
-                onPress={() => handleVehiclePress(vehicle.id)}
+              <TrackingCard
+                shipment={shipment}
+                onAddStop={() => handleAddStop(shipment.id)}
+                onPress={() => handleCardPress(shipment.id)}
               />
             </Animated.View>
           ))}
-        </ScrollView>
-      </Animated.ScrollView>
+
+          {/* Available Vehicles Section */}
+          <Animated.View
+            style={[
+              styles.sectionHeader,
+              {
+                opacity: vehiclesSectionOpacity,
+                transform: [{ translateY: vehiclesSectionY }],
+                marginTop: 16,
+              },
+            ]}
+          >
+            <Text style={styles.sectionTitle}>Available vehicles</Text>
+          </Animated.View>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.vehiclesContainer}
+          >
+            {vehicles.map((vehicle, index) => (
+              <Animated.View
+                key={vehicle.id}
+                style={{
+                  opacity: vehicleAnimations[index].opacity,
+                  transform: [{ scale: vehicleAnimations[index].scale }],
+                }}
+              >
+                <VehicleCard
+                  vehicle={vehicle}
+                  onPress={() => handleVehiclePress(vehicle.id)}
+                />
+              </Animated.View>
+            ))}
+          </ScrollView>
+        </Animated.ScrollView>
+      )}
     </View>
   );
 };
@@ -242,22 +307,29 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 24,
+    padding: 20,
   },
   sectionHeader: {
-    marginBottom: 10,
+    // marginVertical: 16,
   },
   sectionTitle: {
-    fontFamily: FONTFAMILY.specialMedium,
+    fontFamily: FONTFAMILY.semibold,
     fontSize: FONTSIZE.lg,
-    color: colors.blue,
+    color: colors.black,
   },
   vehiclesContainer: {
     paddingVertical: 8,
   },
   cardContainer: {
     marginBottom: 16,
+  },
+  searchResults: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  searchResultsContent: {
+    paddingTop: 90, // Space for header
+    paddingBottom: 24,
   },
 });
 

@@ -1,35 +1,40 @@
 import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import HomeScreen from "../screens/Home/Home";
 import CalculateScreen from "../screens/Calculate/Calculate";
-import ShipmentsScreen from "../screens/Shipments/Shipments";
+import ShipmentScreen from "../screens/Shipments/Shipments";
 import ProfileScreen from "../screens/Profile/Profile";
+import SearchPage from "../screens/Search/Search";
+
 import CustomTabBar from "../components/CustomTabBar";
 
+const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+const MainTabs = () => {
+  return (
+    <Tab.Navigator
+      tabBar={(props) => <CustomTabBar {...props} />}
+      screenOptions={{ headerShown: false }}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Calculate" component={CalculateScreen} />
+      <Tab.Screen name="Shipment" component={ShipmentScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
+  );
+};
 
 const AppNavigator = () => {
   return (
     <NavigationContainer>
-      <StatusBar style="auto" />
-      <Tab.Navigator
-        screenOptions={{
-          headerShown: false,
-          tabBarStyle: {
-            height: 0,
-            display: "none",
-          },
-        }}
-        tabBar={(props) => <CustomTabBar {...props} />}
-      >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Calculate" component={CalculateScreen} />
-        <Tab.Screen name="Shipment" component={ShipmentsScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-      </Tab.Navigator>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="MainTabs" component={MainTabs} />
+        <Stack.Screen name="Search" component={SearchPage} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };

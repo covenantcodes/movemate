@@ -11,14 +11,7 @@ import {
 } from "react-native";
 import colors from "../utils/colors";
 import { FONTFAMILY, FONTSIZE } from "../utils/fonts";
-import { Vehicle } from "../types/global";
-
-interface VehicleCardProps {
-  vehicle: Vehicle;
-  onPress?: () => void;
-  isVisible?: boolean;
-  delay?: number;
-}
+import { Vehicle, VehicleCardProps } from "../types/global";
 
 const VehicleCard: React.FC<VehicleCardProps> = ({
   vehicle,
