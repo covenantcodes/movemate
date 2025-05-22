@@ -13,7 +13,8 @@ import colors from "../../utils/colors";
 import { FONTFAMILY, FONTSIZE } from "../../utils/fonts";
 import DashboardHeader from "../../components/DashboardHeader";
 import TrackingCard from "../../components/TrackingCard";
-import { shipments } from "../../data/data";
+import VehicleCard from "../../components/VehicleCard";
+import { shipments, vehicles } from "../../data/data";
 
 const HomeScreen = () => {
   // Animation values for each card
@@ -32,18 +33,29 @@ const HomeScreen = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
   const scrollViewRef = useRef<ScrollView>(null);
 
+  const vehiclesSectionY = useRef(new Animated.Value(40)).current;
+  const vehiclesSectionOpacity = useRef(new Animated.Value(0)).current;
+
+  // Animation values for each vehicle card
+  const vehicleAnimations = useRef(
+    vehicles.map(() => ({
+      scale: new Animated.Value(0.8),
+      opacity: new Animated.Value(0),
+    }))
+  ).current;
+
   // Function to start the animations
-  const animateCards = () => {
-    // First animate the "Tracking" section header
+  const animateContent = () => {
+    // First animate the "Available vehicles" section header
     Animated.parallel([
-      Animated.timing(trackingTextY, {
+      Animated.timing(vehiclesSectionY, {
         toValue: 0,
         duration: 500,
-        delay: 200, // Start slightly before cards
+        delay: 200,
         useNativeDriver: true,
         easing: Easing.out(Easing.back(1.5)),
       }),
-      Animated.timing(trackingTextOpacity, {
+      Animated.timing(vehiclesSectionOpacity, {
         toValue: 1,
         duration: 400,
         delay: 200,
@@ -51,27 +63,63 @@ const HomeScreen = () => {
       }),
     ]).start();
 
-    // Then animate each card with a staggered delay
+    // Then animate each vehicle card
+    vehicleAnimations.forEach((anim, index) => {
+      Animated.parallel([
+        Animated.timing(anim.scale, {
+          toValue: 1,
+          duration: 500,
+          delay: 300 + index * 70, // Staggered delay
+          useNativeDriver: true,
+          easing: Easing.out(Easing.back(1.7)),
+        }),
+        Animated.timing(anim.opacity, {
+          toValue: 1,
+          duration: 500,
+          delay: 300 + index * 70,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    });
+
+    // Then animate the "Tracking" section header
+    Animated.parallel([
+      Animated.timing(trackingTextY, {
+        toValue: 0,
+        duration: 500,
+        delay: 600, // Start after vehicles animation
+        useNativeDriver: true,
+        easing: Easing.out(Easing.back(1.5)),
+      }),
+      Animated.timing(trackingTextOpacity, {
+        toValue: 1,
+        duration: 400,
+        delay: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Then animate each tracking card
     cardAnimations.forEach((anim, index) => {
       Animated.parallel([
         Animated.timing(anim.translateY, {
           toValue: 0,
-          duration: 1200,
-          delay: 300 + index * 100, // Stagger effect
+          duration: 800,
+          delay: 700 + index * 100, // Stagger effect
           useNativeDriver: true,
           easing: Easing.out(Easing.back(1.5)),
         }),
         Animated.timing(anim.opacity, {
           toValue: 1,
-          duration: 1000,
-          delay: 300 + index * 100,
+          duration: 800,
+          delay: 700 + index * 100,
           useNativeDriver: true,
         }),
       ]).start();
     });
   };
 
-  // Listen for scroll events to trigger animations for cards coming into view
+  // Listen for scroll events
   const handleScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
     {
@@ -84,8 +132,13 @@ const HomeScreen = () => {
 
   // Start animations when component mounts
   useEffect(() => {
-    animateCards();
+    animateContent();
   }, []);
+
+  const handleVehiclePress = (vehicleId: string) => {
+    console.log(`Vehicle pressed: ${vehicleId}`);
+    // Handle vehicle selection
+  };
 
   const handleAddStop = (shipmentId: string) => {
     console.log(`Add stop pressed for shipment ${shipmentId}`);
@@ -109,12 +162,14 @@ const HomeScreen = () => {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
+        {/* Tracking Section */}
         <Animated.View
           style={[
-            styles.trackingSection,
+            styles.sectionHeader,
             {
               opacity: trackingTextOpacity,
               transform: [{ translateY: trackingTextY }],
+              marginTop: 24,
             },
           ]}
         >
@@ -139,6 +194,40 @@ const HomeScreen = () => {
             />
           </Animated.View>
         ))}
+
+        {/* Available Vehicles Section */}
+        <Animated.View
+          style={[
+            styles.sectionHeader,
+            {
+              opacity: vehiclesSectionOpacity,
+              transform: [{ translateY: vehiclesSectionY }],
+            },
+          ]}
+        >
+          <Text style={styles.sectionTitle}>Available vehicles</Text>
+        </Animated.View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.vehiclesContainer}
+        >
+          {vehicles.map((vehicle, index) => (
+            <Animated.View
+              key={vehicle.id}
+              style={{
+                opacity: vehicleAnimations[index].opacity,
+                transform: [{ scale: vehicleAnimations[index].scale }],
+              }}
+            >
+              <VehicleCard
+                vehicle={vehicle}
+                onPress={() => handleVehiclePress(vehicle.id)}
+              />
+            </Animated.View>
+          ))}
+        </ScrollView>
       </Animated.ScrollView>
     </View>
   );
@@ -156,16 +245,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 24,
   },
-  trackingSection: {
-    justifyContent: "center",
-    marginTop: 16,
+  sectionHeader: {
+    marginBottom: 10,
   },
   sectionTitle: {
     fontFamily: FONTFAMILY.specialMedium,
-    fontSize: FONTSIZE.xl,
-    color: colors.black,
+    fontSize: FONTSIZE.lg,
+    color: colors.blue,
   },
-  cardContainer: {},
+  vehiclesContainer: {
+    paddingVertical: 8,
+  },
+  cardContainer: {
+    marginBottom: 16,
+  },
 });
 
 export default HomeScreen;

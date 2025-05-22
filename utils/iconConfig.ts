@@ -47,6 +47,7 @@ export const IconMap = {
   sender: { pack: "MaterialIcons", name: "arrow-circle-up" },
   receiver: { pack: "MaterialIcons", name: "arrow-circle-down" },
   plus: { pack: "Feather", name: "plus" },
+  history: { pack: "MaterialIcons", name: "history" },
 } as const;
 
 

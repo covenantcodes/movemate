@@ -90,7 +90,7 @@ const DashboardHeader = () => {
               <Icon
                 name="search"
                 size={24}
-                color={colors.gray}
+                color={colors.primaryColor}
                 style={styles.searchIcon}
               />
               <TextInput
