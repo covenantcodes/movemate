@@ -43,6 +43,10 @@ export const IconMap = {
   bell: { pack: "MaterialCommunityIcons", name: "bell-outline" },
   search: { pack: "MaterialIcons", name: "search" },
   barcodeScan: { pack: "MaterialCommunityIcons", name: "barcode-scan" },
+  shipmentBox: { pack: "MaterialCommunityIcons", name: "package-variant-closed" },
+  sender: { pack: "MaterialIcons", name: "arrow-circle-up" },
+  receiver: { pack: "MaterialIcons", name: "arrow-circle-down" },
+  plus: { pack: "Feather", name: "plus" },
 } as const;
 
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -9,78 +9,114 @@ import {
   SafeAreaView,
   Dimensions,
   Platform,
+  Animated,
+  Easing,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
 import colors from "../utils/colors";
 import { FONTFAMILY, FONTSIZE } from "../utils/fonts";
-import userData from "../data/userData";
+import { userData } from "../data/data";
 import Icon from "./common/Icon";
 
 const { width } = Dimensions.get("window");
 
 const DashboardHeader = () => {
+  // Animation values
+  const translateY = useRef(new Animated.Value(-200)).current; // Start off-screen (above)
+  const fadeAnim = useRef(new Animated.Value(0)).current; // For fade-in effect
+
+  // Run animation on component mount
+  useEffect(() => {
+    // Slide in from top animation
+    Animated.parallel([
+      Animated.timing(translateY, {
+        toValue: 0,
+        duration: 900,
+        delay: 300,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.back(1.5)), // Slight bounce effect
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
+    <Animated.View
+      style={[
+        {
+          transform: [{ translateY }],
+          opacity: fadeAnim,
+        },
+      ]}
+    >
+      <SafeAreaView style={styles.container}>
+        <StatusBar style="light" />
 
-      <View style={styles.headerBackground}>
-        <View style={styles.topRow}>
-          <View style={styles.profileSection}>
-            <Image
-              source={userData.profilePicture}
-              style={styles.profilePhoto}
-            />
+        <View style={styles.headerBackground}>
+          <View style={styles.topRow}>
+            <View style={styles.profileSection}>
+              <Image
+                source={userData.profilePicture}
+                style={styles.profilePhoto}
+              />
 
-            <View style={styles.locationMainContainer}>
-              <View style={styles.locationTextContainer}>
-                <Icon name="location" size={13} color={colors.gray6} />
-                <Text style={styles.yourLocationText}>Your location</Text>
+              <View style={styles.locationMainContainer}>
+                <View style={styles.locationTextContainer}>
+                  <Icon name="location" size={13} color={colors.gray6} />
+                  <Text style={styles.yourLocationText}>Your location</Text>
+                </View>
+                <TouchableOpacity style={styles.locationContainer}>
+                  <Text style={styles.locationText}>{userData.location}</Text>
+                  <Icon name="arrowDown" size={18} color={colors.white} />
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity style={styles.locationContainer}>
-                <Text style={styles.locationText}>{userData.location}</Text>
-                <Icon name="arrowDown" size={18} color={colors.white} />
+            </View>
+
+            <TouchableOpacity style={styles.notificationButton}>
+              {userData.hasNewNotifications && (
+                <View style={styles.notificationDot} />
+              )}
+              <Icon name="bell" size={29} color={colors.black} />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.searchSection}>
+            <View style={styles.searchBar}>
+              <Icon
+                name="search"
+                size={24}
+                color={colors.gray}
+                style={styles.searchIcon}
+              />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Enter the receipt number ..."
+                placeholderTextColor={colors.gray}
+              />
+              {/* Integrated scan button */}
+              <TouchableOpacity style={styles.integratedScanButton}>
+                <View style={styles.scanButtonInner}>
+                  <Icon name="barcodeScan" size={18} color={colors.white} />
+                </View>
               </TouchableOpacity>
             </View>
           </View>
-
-          <TouchableOpacity style={styles.notificationButton}>
-            {userData.hasNewNotifications && (
-              <View style={styles.notificationDot} />
-            )}
-            <Icon name="bell" size={29} color={colors.black} />
-          </TouchableOpacity>
         </View>
-
-        <View style={styles.searchSection}>
-          <View style={styles.searchBar}>
-            <Icon
-              name="search"
-              size={24}
-              color={colors.gray}
-              style={styles.searchIcon}
-            />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Enter the receipt number..."
-              placeholderTextColor={colors.gray}
-            />
-            {/* Integrated scan button */}
-            <TouchableOpacity style={styles.integratedScanButton}>
-              <View style={styles.scanButtonInner}>
-                <Icon name="barcodeScan" size={18} color={colors.white} />
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.primaryColor,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   headerBackground: {
     backgroundColor: colors.primaryColor,
@@ -122,7 +158,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     color: colors.white,
-    fontFamily: FONTFAMILY.medium,
+    fontFamily: FONTFAMILY.regular,
     fontSize: FONTSIZE.md,
     marginHorizontal: 4,
   },
@@ -169,9 +205,9 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FONTFAMILY.regular,
     fontSize: FONTSIZE.md,
-    color: colors.black,
+    color: colors.gray6,
     paddingVertical: 0,
-    marginRight: 8, // Give some breathing room before the scan button
+    marginRight: 8,
   },
   integratedScanButton: {
     backgroundColor: colors.secondaryColor,

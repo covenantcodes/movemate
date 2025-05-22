@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   text: {
-    fontFamily: "DMSansMedium",
+    fontFamily: "NotoSansMedium",
     fontSize: 18,
     color: colors.black,
   },

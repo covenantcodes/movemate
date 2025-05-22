@@ -14,8 +14,11 @@ const colors = {
     gray5: '#E5E7EB',
     gray6: '#dbd9d9',
     blue: '#2563EB', 
+    orangeBg: '#F9E7D7',
     deepBlue:'#0C263A',
-    orange: '#E99B36'
+    orange: '#E99B36',
+    green: '#4fc96f',
+    greenBg: '#DAF0E0'
   };
   
   export default colors;

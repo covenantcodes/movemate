@@ -31,7 +31,7 @@ const CustomTabBar = ({
     Animated.parallel([
       Animated.timing(translateY, {
         toValue: 0,
-        duration: 800,
+        duration: 900,
         delay: 300,
         useNativeDriver: true,
         easing: Easing.out(Easing.back(1.5)), // Slight bounce effect

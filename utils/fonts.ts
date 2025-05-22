@@ -5,14 +5,15 @@ import { Dimensions } from "react-native";
 const { height } = Dimensions.get("window");
 
 export const FONTFAMILY = {
-    bold: "DMSansBold",
-    regular: "DMSansRegular",
-    thin: "DMSansThin",
-    light: "DMSansLight",
-    semibold: "DMSansSemiBold",
-    heavy: "DMSansExtraBold",
-    medium: "DMSansMedium",
-  };
+  bold: "DMSansBold",
+  regular: "DMSansRegular",
+  thin: "DMSansThin",
+  light: "DMSansLight",
+  semibold: "DMSansSemiBold",
+  heavy: "DMSansExtraBold",
+  medium: "DMSansMedium",
+  specialMedium: "NotoSansMedium",
+};
   
   export const FONTSIZE = {
     xs: RFValue(12, height),

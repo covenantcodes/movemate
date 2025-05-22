@@ -37,4 +37,10 @@ interface UserData {
     hasNewNotifications: boolean;
 }
 
-export type { Shipment, IconProps, PulseIndicatorProps, UserData };
+interface TrackingCardProps {
+  shipment: Shipment;
+  onAddStop?: () => void;
+  onPress?: () => void;
+}
+
+export type { Shipment, IconProps, PulseIndicatorProps, UserData, TrackingCardProps };
