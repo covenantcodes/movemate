@@ -1,12 +1,8 @@
 // User data file to store and manage user information
 import { ImageSourcePropType } from "react-native";
+import { UserData } from "../types/global";
 
-interface UserData {
-  name: string;
-  profilePicture: ImageSourcePropType;
-  location: string;
-  hasNewNotifications: boolean;
-}
+
 
 const userData: UserData = {
   name: "John Doe",

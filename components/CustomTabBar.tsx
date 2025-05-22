@@ -31,8 +31,8 @@ const CustomTabBar = ({
     Animated.parallel([
       Animated.timing(translateY, {
         toValue: 0,
-        duration: 500,
-        delay: 300, // Short delay before starting
+        duration: 800,
+        delay: 300,
         useNativeDriver: true,
         easing: Easing.out(Easing.back(1.5)), // Slight bounce effect
       }),
@@ -55,7 +55,7 @@ const CustomTabBar = ({
   const slideToIndex = (index: number) => {
     Animated.timing(translateX, {
       toValue: index * itemWidth,
-      duration: 600,
+      duration: 500,
       useNativeDriver: true,
       easing: Easing.bezier(0.25, 0.1, 0.25, 1),
     }).start();

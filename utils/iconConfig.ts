@@ -9,6 +9,7 @@ import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import Entypo from "react-native-vector-icons/Entypo";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Octicons from "react-native-vector-icons/Octicons";
+import { IconProps } from '../types/global';
 
 
 // Export all icon packs with proper typing
@@ -44,13 +45,7 @@ export const IconMap = {
   barcodeScan: { pack: "MaterialCommunityIcons", name: "barcode-scan" },
 } as const;
 
-// Icon component helper
-export interface IconProps {
-  name: string;
-  size?: number;
-  color?: string;
-  style?: any;
-}
+
 
 export const getIcon = (
   iconKey: keyof typeof IconMap,

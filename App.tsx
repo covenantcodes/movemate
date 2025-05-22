@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { useFonts } from "expo-font";
-import { PulseIndicator } from "react-native-indicators";
+import PulseIndicator from "./components/common/PulseIndicator";
 
 import colors from "./utils/colors";
 import AppNavigator from "./navigation/AppNavigator";
@@ -23,7 +23,7 @@ export default function App() {
   if (!fontsLoaded) {
     return (
       <View style={styles.loadingContainer}>
-        <PulseIndicator color={colors.primaryBg} />
+        <PulseIndicator color={colors.primaryBg} size={40} />
       </View>
     );
   }

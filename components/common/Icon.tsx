@@ -1,13 +1,7 @@
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { getIcon, IconMap } from "../../utils/iconConfig";
-
-interface IconProps {
-  name: keyof typeof IconMap;
-  size?: number;
-  color?: string;
-  style?: StyleProp<ViewStyle>;
-}
+import { IconProps } from "../../types/global";
 
 const Icon: React.FC<IconProps> = ({
   name,
