@@ -22,7 +22,7 @@ import Icon from "./common/Icon";
 const { width } = Dimensions.get("window");
 
 interface DashboardHeaderProps {
-  onSearchResults?: (results: any[]) => void;
+  onSearchResults?: (results: any[], isActive: boolean) => void;
   searchData?: any[];
 }
 
@@ -68,31 +68,50 @@ const DashboardHeader = ({
   const activateSearch = () => {
     setIsSearchActive(true);
 
+    if (onSearchResults) {
+      onSearchResults([], true);
+    }
+
     Animated.parallel([
       // Collapse header height
       Animated.timing(headerHeight, {
         toValue: 130,
-        duration: 300,
+        duration: 600,
         useNativeDriver: false,
       }),
       // Move search bar up
       Animated.timing(searchBarTop, {
         toValue: 60,
-        duration: 300,
+        duration: 600,
         useNativeDriver: false,
       }),
       // Fade out profile section
       Animated.timing(profileOpacity, {
         toValue: 0,
-        duration: 200,
+        duration: 300,
         useNativeDriver: true,
       }),
       // Make search bar narrower to fit back button
       Animated.timing(searchBarWidth, {
         toValue: width - 90,
-        duration: 400,
+        duration: 450,
         useNativeDriver: false,
         easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      }),
+
+      Animated.timing(backButtonOpacity, {
+        toValue: 1,
+        duration: 400,
+        delay: 150,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.back(1.5)),
+      }),
+      Animated.timing(backButtonScale, {
+        toValue: 1,
+        duration: 400,
+        delay: 150,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.back(1.5)),
       }),
     ]).start(() => {
       // Focus the input after animation completes
@@ -102,49 +121,73 @@ const DashboardHeader = ({
     });
   };
 
-  // Handle search deactivation
+  // Handle search deactivation - FIXED VERSION
   const deactivateSearch = () => {
     Keyboard.dismiss();
 
+    // First, fade out and scale down the back button quickly
     Animated.parallel([
-      // Restore header height
-      Animated.timing(headerHeight, {
-        toValue: 200,
-        duration: 300,
-        useNativeDriver: false,
-      }),
-      // Move search bar back down
-      Animated.timing(searchBarTop, {
-        toValue: 120,
-        duration: 300,
-        useNativeDriver: false,
-      }),
-      // Fade in profile section
-      Animated.timing(profileOpacity, {
-        toValue: 1,
-        duration: 300,
+      Animated.timing(backButtonOpacity, {
+        toValue: 0,
+        duration: 130, // Faster fade out
         useNativeDriver: true,
       }),
-      // Restore search bar width
-      Animated.timing(searchBarWidth, {
-        toValue: width - 32,
-        duration: 400,
-        useNativeDriver: false,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      Animated.timing(backButtonScale, {
+        toValue: 0.5,
+        duration: 120, // Faster scale down
+        useNativeDriver: true,
+        easing: Easing.in(Easing.cubic),
       }),
     ]).start(() => {
-      setIsSearchActive(false);
-      setSearchQuery("");
-      // Clear results
-      if (onSearchResults) {
-        onSearchResults([]);
-      }
+      // After back button is hidden, animate everything else
+      Animated.parallel([
+        // Restore header height
+        Animated.timing(headerHeight, {
+          toValue: 200,
+          duration: 700, // Slightly longer for smoother transition
+          useNativeDriver: false,
+          easing: Easing.out(Easing.quad),
+        }),
+        // Move search bar back down
+        Animated.timing(searchBarTop, {
+          toValue: 120,
+          duration: 700,
+          useNativeDriver: false,
+          easing: Easing.out(Easing.quad),
+        }),
+        // Expand search bar width smoothly
+        Animated.timing(searchBarWidth, {
+          toValue: width - 32,
+          duration: 500, // Smooth width expansion
+          useNativeDriver: false,
+          easing: Easing.out(Easing.quad), // Smoother easing
+        }),
+        // Fade in profile section with slight delay
+        Animated.timing(profileOpacity, {
+          toValue: 1,
+          duration: 250,
+          delay: 100, // Small delay for better sequencing
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setIsSearchActive(false);
+        setSearchQuery("");
+        // Clear results
+        if (onSearchResults) {
+          onSearchResults([], false);
+        }
+      });
     });
   };
 
   // Handle search
   const handleSearch = () => {
-    if (!searchQuery.trim()) return;
+    if (!searchQuery.trim()) {
+      if (onSearchResults) {
+        onSearchResults([], true);
+      }
+      return;
+    }
 
     // Filter results based on searchQuery
     const results = searchData.filter(
@@ -156,7 +199,7 @@ const DashboardHeader = ({
 
     // Send results back to parent component
     if (onSearchResults) {
-      onSearchResults(results);
+      onSearchResults(results, true);
     }
 
     Keyboard.dismiss();
@@ -183,10 +226,12 @@ const DashboardHeader = ({
             pointerEvents={isSearchActive ? "none" : "auto"}
           >
             <View style={styles.profileSection}>
-              <Image
-                source={userData.profilePicture}
-                style={styles.profilePhoto}
-              />
+              <TouchableOpacity>
+                <Image
+                  source={userData.profilePicture}
+                  style={styles.profilePhoto}
+                />
+              </TouchableOpacity>
 
               <View style={styles.locationMainContainer}>
                 <View style={styles.locationTextContainer}>
@@ -221,14 +266,24 @@ const DashboardHeader = ({
               },
             ]}
           >
-            {isSearchActive ? (
-              <TouchableOpacity
-                style={styles.backButtonContainer}
-                onPress={deactivateSearch}
+            {isSearchActive && (
+              <Animated.View
+                style={[
+                  styles.backButtonContainer,
+                  {
+                    opacity: backButtonOpacity,
+                    transform: [{ scale: backButtonScale }],
+                  },
+                ]}
               >
-                <Icon name="arrowLeft" size={40} color={colors.white} />
-              </TouchableOpacity>
-            ) : null}
+                <TouchableOpacity
+                  style={styles.backButtonContainer}
+                  onPress={deactivateSearch}
+                >
+                  <Icon name="arrowLeft" size={40} color={colors.white} />
+                </TouchableOpacity>
+              </Animated.View>
+            )}
 
             {isSearchActive ? (
               <View style={styles.searchBarContainerActive}>

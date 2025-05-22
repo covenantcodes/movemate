@@ -40,7 +40,7 @@ const SearchResultItem: React.FC<SearchResultItemProps> = ({
       onPress={() => onPress(item.id)}
     >
       <View style={styles.iconContainer}>
-        <Icon name="package" size={24} color={colors.primaryColor} />
+        <Icon name="package" size={24} color={colors.white} />
       </View>
 
       <View style={styles.contentContainer}>
@@ -67,25 +67,19 @@ const SearchResultItem: React.FC<SearchResultItemProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
     borderRadius: 12,
     padding: 16,
-    marginBottom: 12,
     flexDirection: "row",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 2,
+
     width: width - 32,
-    marginHorizontal: 16,
+    marginHorizontal: 10,
   },
   iconContainer: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: colors.primaryBg,
+    backgroundColor: colors.primaryColor,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,

@@ -9,6 +9,7 @@ import {
   FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  TouchableOpacity,
 } from "react-native";
 import colors from "../../utils/colors";
 import { FONTFAMILY, FONTSIZE } from "../../utils/fonts";
@@ -28,6 +29,37 @@ const searchData = shipments.map((shipment) => ({
     "Samsung TV",
   ][Math.floor(Math.random() * 4)], // Just for demo, assign random product names
 }));
+
+const suggestedSearches = [
+  {
+    id: "sug1",
+    productName: "Summer Linen Jacket",
+    shipmentNumber: "NE312367327",
+    sender: { city: "Madrid", code: "MAD" },
+    receiver: { city: "Paris", code: "PAR" },
+  },
+  {
+    id: "sug2",
+    productName: "MacBook Pro M1",
+    shipmentNumber: "NE328940543",
+    sender: { city: "London", code: "LDN" },
+    receiver: { city: "Berlin", code: "BER" },
+  },
+  {
+    id: "sug3",
+    productName: "Leather Office Chair",
+    shipmentNumber: "NE398275611",
+    sender: { city: "Barcelona", code: "BCN" },
+    receiver: { city: "Rome", code: "ROM" },
+  },
+  {
+    id: "sug4",
+    productName: "Wireless Headphones",
+    shipmentNumber: "NE367219954",
+    sender: { city: "Amsterdam", code: "AMS" },
+    receiver: { city: "Vienna", code: "VIE" },
+  },
+];
 
 const HomeScreen = () => {
   // State for search results
@@ -65,11 +97,11 @@ const HomeScreen = () => {
   ).current;
 
   // Function to handle search results
-  const handleSearchResults = (results: any[]) => {
+  const handleSearchResults = (results: any[], isActive: boolean) => {
     setSearchResults(results);
-    setIsSearchActive(results.length > 0);
+    setIsSearchActive(isActive);
 
-    if (results.length > 0) {
+    if (isActive) {
       // Fade in search results, fade out other content
       Animated.timing(searchResultsOpacity, {
         toValue: 1,
@@ -207,14 +239,30 @@ const HomeScreen = () => {
         <Animated.View
           style={[styles.searchResults, { opacity: searchResultsOpacity }]}
         >
-          <FlatList
-            data={searchResults}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <SearchResultItem item={item} onPress={handleResultPress} />
-            )}
-            contentContainerStyle={styles.searchResultsContent}
-          />
+          {searchResults.length > 0 ? (
+            // Show actual search results when available
+            <>
+              <FlatList
+                data={searchResults}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <SearchResultItem item={item} onPress={handleResultPress} />
+                )}
+                contentContainerStyle={styles.searchResultsContent}
+              />
+            </>
+          ) : (
+            <View style={styles.suggestedSearchContainer}>
+              <FlatList
+                data={suggestedSearches}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <SearchResultItem item={item} onPress={handleResultPress} />
+                )}
+                contentContainerStyle={styles.suggestedSearchContent}
+              />
+            </View>
+          )}
         </Animated.View>
       ) : (
         // Normal Content - Show when search is not active
@@ -328,7 +376,21 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   searchResultsContent: {
-    paddingTop: 90, // Space for header
+    paddingTop: 90,
+    paddingBottom: 24,
+  },
+  suggestedSearchContainer: {
+    flex: 1,
+    paddingTop: 90,
+  },
+  suggestedSearchTitle: {
+    fontFamily: FONTFAMILY.semibold,
+    fontSize: FONTSIZE.lg,
+    color: colors.black,
+    marginBottom: 16,
+    marginHorizontal: 16,
+  },
+  suggestedSearchContent: {
     paddingBottom: 24,
   },
 });
