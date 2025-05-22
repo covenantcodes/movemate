@@ -1,3 +1,4 @@
+import React from 'react';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Feather from "react-native-vector-icons/Feather";
@@ -8,7 +9,7 @@ import Entypo from "react-native-vector-icons/Entypo";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Octicons from "react-native-vector-icons/Octicons";
 
-// Export all icon packs
+// Export all icon packs with proper typing
 const Icons = {
   MaterialCommunityIcons,
   MaterialIcons,
@@ -20,6 +21,9 @@ const Icons = {
   AntDesign,
   Octicons,
 };
+
+// Add type for the Icons object
+type IconsType = typeof Icons;
 
 // Icon mapping for common icons used in the app
 export const IconMap = {
@@ -35,7 +39,7 @@ export const IconMap = {
   bell: { pack: "Feather", name: "bell" },
   search: { pack: "MaterialIcons", name: "search" },
   barcodeScan: { pack: "MaterialCommunityIcons", name: "barcode-scan" },
-};
+} as const;
 
 // Icon component helper
 export interface IconProps {
@@ -45,12 +49,15 @@ export interface IconProps {
   style?: any;
 }
 
-export const getIcon = (iconKey: keyof typeof IconMap, props: Omit<IconProps, "name">) => {
+export const getIcon = (
+  iconKey: keyof typeof IconMap,
+  props: Omit<IconProps, "name">
+) => {
   const iconConfig = IconMap[iconKey];
   if (!iconConfig) return null;
-  
-  const IconComponent = Icons[iconConfig.pack as keyof typeof Icons];
-  return <IconComponent name={iconConfig.name} {...props} />;
+
+  const IconPack = Icons[iconConfig.pack as keyof typeof Icons];
+  return React.createElement(IconPack, { name: iconConfig.name, ...props });
 };
 
 export default Icons;

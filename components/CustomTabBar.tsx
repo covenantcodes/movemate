@@ -8,10 +8,10 @@ import {
   Easing,
 } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import colors from "../utils/colors";
 import { FONTFAMILY, FONTSIZE } from "../utils/fonts";
 import { Platform } from "react-native";
+import Icon from "./common/Icon";
 
 const { width } = Dimensions.get("window");
 
@@ -42,18 +42,19 @@ const CustomTabBar = ({
     }).start();
   };
 
+  // Use named icons from the icon map
   const getIconName = (routeName: string) => {
     switch (routeName) {
       case "Home":
-        return "home-outline";
+        return "home";
       case "Calculate":
-        return "calculator-variant-outline";
+        return "calculate";
       case "Shipment":
-        return "history";
+        return "shipment";
       case "Profile":
-        return "account-outline";
+        return "profile";
       default:
-        return "home-outline";
+        return "home";
     }
   };
 
@@ -84,6 +85,8 @@ const CustomTabBar = ({
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
+        const iconName = getIconName(route.name);
+        const iconSize = getIconSize(route.name);
 
         const onPress = () => {
           const event = navigation.emit({
@@ -105,9 +108,9 @@ const CustomTabBar = ({
             onPress={onPress}
             style={styles.tabButton}
           >
-            <MaterialCommunityIcons
-              name={getIconName(route.name)}
-              size={getIconSize(route.name)}
+            <Icon
+              name={iconName as any}
+              size={iconSize}
               color={isFocused ? colors.primaryColor : colors.grayBg}
             />
             <View style={styles.labelContainer}>

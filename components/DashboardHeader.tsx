@@ -11,13 +11,11 @@ import {
   Platform,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import Feather from "react-native-vector-icons/MaterialCommunityIcons";
 
 import colors from "../utils/colors";
 import { FONTFAMILY, FONTSIZE } from "../utils/fonts";
 import userData from "../data/userData";
+import Icon from "./common/Icon";
 
 const { width } = Dimensions.get("window");
 
@@ -38,17 +36,9 @@ const DashboardHeader = () => {
             />
 
             <TouchableOpacity style={styles.locationContainer}>
-              <MaterialIcons
-                name="location-on"
-                size={18}
-                color={colors.white}
-              />
+              <Icon name="location" size={18} color={colors.white} />
               <Text style={styles.locationText}>{userData.location}</Text>
-              <MaterialIcons
-                name="keyboard-arrow-down"
-                size={18}
-                color={colors.white}
-              />
+              <Icon name="arrowDown" size={18} color={colors.white} />
             </TouchableOpacity>
           </View>
 
@@ -57,14 +47,14 @@ const DashboardHeader = () => {
             {userData.hasNewNotifications && (
               <View style={styles.notificationDot} />
             )}
-            <Feather name="bell" size={20} color={colors.primaryColor} />
+            <Icon name="bell" size={20} color={colors.primaryColor} />
           </TouchableOpacity>
         </View>
 
         {/* Search bar */}
         <View style={styles.searchSection}>
           <View style={styles.searchBar}>
-            <MaterialIcons
+            <Icon
               name="search"
               size={24}
               color={colors.gray}
@@ -79,11 +69,7 @@ const DashboardHeader = () => {
 
           <TouchableOpacity style={styles.scanButton}>
             <View style={styles.scanButtonInner}>
-              <MaterialCommunityIcons
-                name="barcode-scan"
-                size={18}
-                color={colors.white}
-              />
+              <Icon name="barcodeScan" size={18} color={colors.white} />
             </View>
           </TouchableOpacity>
         </View>
