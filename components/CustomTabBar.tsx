@@ -21,10 +21,29 @@ const CustomTabBar = ({
   navigation,
 }: BottomTabBarProps) => {
   const translateX = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(100)).current; // This starts off-screen (below)
+  const fadeAnim = useRef(new Animated.Value(0)).current; // For fade-in effect
   const itemWidth = width / state.routes.length;
 
-  // Set initial position
+  // Set initial position and animate entry
   useEffect(() => {
+    // Slide in from bottom animation
+    Animated.parallel([
+      Animated.timing(translateY, {
+        toValue: 0,
+        duration: 500,
+        delay: 300, // Short delay before starting
+        useNativeDriver: true,
+        easing: Easing.out(Easing.back(1.5)), // Slight bounce effect
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Set initial indicator position
     slideToIndex(state.index);
   }, []);
 
@@ -68,69 +87,94 @@ const CustomTabBar = ({
   };
 
   return (
-    <View style={styles.tabContainer}>
-      {/* Animated indicator */}
-      <Animated.View
-        style={[
-          styles.indicator,
-          {
-            transform: [{ translateX }],
-            width: itemWidth,
-          },
-        ]}
-      >
-        <View style={styles.indicatorInner} />
-      </Animated.View>
+    <Animated.View
+      style={[
+        styles.container,
+        {
+          transform: [{ translateY }],
+          opacity: fadeAnim,
+        },
+      ]}
+    >
+      <View style={styles.tabContainer}>
+        {/* Animated indicator */}
+        <Animated.View
+          style={[
+            styles.indicator,
+            {
+              transform: [{ translateX }],
+              width: itemWidth,
+            },
+          ]}
+        >
+          <View style={styles.indicatorInner} />
+        </Animated.View>
 
-      {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
-        const isFocused = state.index === index;
-        const iconName = getIconName(route.name);
-        const iconSize = getIconSize(route.name);
+        {state.routes.map((route, index) => {
+          const { options } = descriptors[route.key];
+          const isFocused = state.index === index;
+          const iconName = getIconName(route.name);
+          const iconSize = getIconSize(route.name);
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: "tabPress",
-            target: route.key,
-            canPreventDefault: true,
-          });
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
 
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
-        };
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name);
+            }
+          };
 
-        return (
-          <TouchableOpacity
-            key={route.key}
-            accessibilityRole="button"
-            accessibilityState={isFocused ? { selected: true } : {}}
-            onPress={onPress}
-            style={styles.tabButton}
-          >
-            <Icon
-              name={iconName as any}
-              size={iconSize}
-              color={isFocused ? colors.primaryColor : colors.grayBg}
-            />
-            <View style={styles.labelContainer}>
-              <Animated.Text
-                style={[
-                  styles.tabLabel,
-                  { color: isFocused ? colors.primaryColor : colors.grayBg },
-                ]}
-              >
-                {route.name}
-              </Animated.Text>
-            </View>
-          </TouchableOpacity>
-        );
-      })}
-    </View>
+          return (
+            <TouchableOpacity
+              key={route.key}
+              accessibilityRole="button"
+              accessibilityState={isFocused ? { selected: true } : {}}
+              onPress={onPress}
+              style={styles.tabButton}
+            >
+              <Icon
+                name={iconName as any}
+                size={iconSize}
+                color={isFocused ? colors.primaryColor : colors.grayBg}
+              />
+              <View style={styles.labelContainer}>
+                <Animated.Text
+                  style={[
+                    styles.tabLabel,
+                    { color: isFocused ? colors.primaryColor : colors.grayBg },
+                  ]}
+                >
+                  {route.name}
+                </Animated.Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    // Adding shadow for better visual separation
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: -3 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+      },
+      android: {
+        elevation: 8,
+      },
+    }),
+  },
   tabContainer: {
     flexDirection: "row",
     height: Platform.OS === "ios" ? 70 : 90,
