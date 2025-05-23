@@ -94,12 +94,12 @@ const HomeScreen = () => {
     setIsSearchActive(isActive);
 
     if (isActive) {
-      if (searchResults.length === 0) {
-        searchItemAnimations.forEach((anim) => {
-          anim.translateY.setValue(30);
-          anim.opacity.setValue(0);
-        });
-      }
+      // if (searchResults.length === 0) {
+      //   searchItemAnimations.forEach((anim) => {
+      //     anim.translateY.setValue(30);
+      //     anim.opacity.setValue(0);
+      //   });
+      // }
 
       // Use Animated.timing with delay instead of setTimeout for better performance
       Animated.parallel([

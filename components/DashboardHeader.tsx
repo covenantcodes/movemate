@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -47,28 +47,6 @@ const DashboardHeader = ({
   const backButtonTranslateX = useRef(new Animated.Value(-20)).current; // For back button translation
 
   const inputRef = useRef<TextInput>(null);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      // Reset animation values to their initial state
-      translateY.setValue(0); // No need for entrance animation when returning
-      fadeAnim.setValue(1);
-      headerHeight.setValue(200);
-      searchBarTop.setValue(120);
-      profileOpacity.setValue(1);
-      searchBarWidth.setValue(width - 32);
-
-      // Make sure search is deactivated when coming back to this screen
-      setIsSearchActive(false);
-      setSearchQuery("");
-
-      if (onSearchResults) {
-        onSearchResults([], false);
-      }
-
-      return () => {};
-    }, [])
-  );
 
   // Handle initial entrance animation
   useEffect(() => {
@@ -463,6 +441,7 @@ const DashboardHeader = ({
 const styles = StyleSheet.create({
   headerBackground: {
     backgroundColor: colors.primaryColor,
+
     paddingHorizontal: 16,
     paddingBottom: 20,
     overflow: "hidden",
@@ -471,8 +450,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: Platform.OS === "ios" ? 20 : 60,
-    marginBottom: 16,
+    marginTop: Platform.OS === "ios" ? 20 : 53,
+    marginBottom: 20,
   },
   profileSection: {
     flexDirection: "row",

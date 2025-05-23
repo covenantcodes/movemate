@@ -262,8 +262,6 @@ const CalculateScreen = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      <StatusBar barStyle="light-content" />
-
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <Animated.View
