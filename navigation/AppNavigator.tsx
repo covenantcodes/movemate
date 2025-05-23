@@ -40,6 +40,7 @@ const AppNavigator = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="MainTabs" component={MainTabs} />
         <Stack.Screen name="Search" component={SearchPage} />
+        <Stack.Screen name="CalculateResult" component={CalculateResult} />
       </Stack.Navigator>
     </NavigationContainer>
   );

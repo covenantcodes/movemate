@@ -1,5 +1,8 @@
 import { StyleProp, ViewStyle, ImageSourcePropType} from "react-native";
 import {  IconMap } from "../utils/iconConfig";
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+
 
  interface Shipment {
   id: string;
@@ -80,5 +83,13 @@ interface SearchResultItemProps {
   onPress: (id: string) => void;
 }
 
+ type RootStackParamList = {
+  Home: undefined;
+  Calculate: undefined;
+  CalculateResult: { amount: string };
+  Shipment: undefined;
+  Profile: undefined;
+};
 
-export type { Shipment, IconProps, PulseIndicatorProps, UserData, TrackingCardProps, Vehicle, VehicleCardProps, DashboardHeaderProps, SearchResultItemProps};
+
+export type { Shipment, IconProps, PulseIndicatorProps, UserData, TrackingCardProps, Vehicle, VehicleCardProps, DashboardHeaderProps, SearchResultItemProps, RootStackParamList,   };

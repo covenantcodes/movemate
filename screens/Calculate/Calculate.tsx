@@ -39,7 +39,7 @@ const categoryOptions = [
 ];
 
 const CalculateScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const [selectedPackage, setSelectedPackage] = useState("Box");
   const [isPackageDropdownOpen, setIsPackageDropdownOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);

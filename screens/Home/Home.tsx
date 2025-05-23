@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import TrackingCard from "../../components/TrackingCard";
 import VehicleCard from "../../components/VehicleCard";
 import SearchResultItem from "../../components/SearchResultItem";
 import { shipments, vehicles } from "../../data/data";
+import { useFocusEffect } from "@react-navigation/native";
 
 const suggestedSearches = [
   {
@@ -57,6 +58,14 @@ const HomeScreen = () => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearchActive, setIsSearchActive] = useState(false);
 
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setIsSearchActive(false);
+        setSearchResults([]);
+      };
+    }, [])
+  );
   // Animation values for each card
   const cardAnimations = useRef(
     shipments.map(() => ({
@@ -88,74 +97,84 @@ const HomeScreen = () => {
     }))
   ).current;
 
-  // Function to handle search results
   const handleSearchResults = (results: any[], isActive: boolean) => {
-    setSearchResults(results);
-    setIsSearchActive(isActive);
-
     if (isActive) {
-      // if (searchResults.length === 0) {
-      //   searchItemAnimations.forEach((anim) => {
-      //     anim.translateY.setValue(30);
-      //     anim.opacity.setValue(0);
-      //   });
-      // }
+      // Check if we're transitioning from inactive to active
+      const wasInactive = !isSearchActive;
 
-      // Use Animated.timing with delay instead of setTimeout for better performance
-      Animated.parallel([
-        // Fade in with 1 second delay
-        Animated.timing(searchResultsOpacity, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        // Slide up below with 1 second delay
-        Animated.timing(searchResultsTranslateY, {
-          toValue: 0,
-          duration: 450,
-          delay: 500,
-          useNativeDriver: true,
-          easing: Easing.out(Easing.ease),
-        }),
-      ]).start(() => {
-        // After container animation, animate individual items
-        const itemAnimations = searchItemAnimations.map((anim, index) =>
-          Animated.parallel([
-            Animated.timing(anim.opacity, {
-              toValue: 1,
-              duration: 200,
-              delay: index * 50, // Stagger animation
-              useNativeDriver: true,
-            }),
-            Animated.timing(anim.translateY, {
-              toValue: 0,
-              duration: 250,
-              delay: index * 50,
-              useNativeDriver: true,
-              easing: Easing.out(Easing.quad),
-            }),
-          ])
-        );
+      // Update state first
+      setSearchResults(results);
+      setIsSearchActive(isActive);
 
-        Animated.parallel(itemAnimations).start();
-      });
+      // Only reset and animate if we're transitioning from inactive to active
+      // OR if this is the first time we're getting results
+      if (wasInactive) {
+        // Reset search container animations
+        searchResultsOpacity.setValue(0);
+        searchResultsTranslateY.setValue(20);
+
+        // Reset item animations
+        searchItemAnimations.forEach((anim) => {
+          anim.translateY.setValue(30);
+          anim.opacity.setValue(0);
+        });
+
+        // Start container animation
+        Animated.parallel([
+          Animated.timing(searchResultsOpacity, {
+            toValue: 1,
+            duration: 250,
+            useNativeDriver: true,
+          }),
+          Animated.timing(searchResultsTranslateY, {
+            toValue: 0,
+            duration: 300,
+            useNativeDriver: true,
+            easing: Easing.out(Easing.ease),
+          }),
+        ]).start(() => {
+          // Animate individual items after container animation
+          const itemAnimations = searchItemAnimations.map((anim, index) =>
+            Animated.parallel([
+              Animated.timing(anim.opacity, {
+                toValue: 1,
+                duration: 200,
+                delay: index * 50,
+                useNativeDriver: true,
+              }),
+              Animated.timing(anim.translateY, {
+                toValue: 0,
+                duration: 250,
+                delay: index * 50,
+                useNativeDriver: true,
+                easing: Easing.out(Easing.quad),
+              }),
+            ])
+          );
+
+          Animated.parallel(itemAnimations).start();
+        });
+      }
+      // If search is already active, just update the results without animating
     } else {
-      // Run animations in parallel when deactivating (no delay needed)
+      // For deactivation, run animations first, then update state
       Animated.parallel([
-        // Fade out
         Animated.timing(searchResultsOpacity, {
           toValue: 0,
-          duration: 0,
+          duration: 200,
           useNativeDriver: true,
         }),
-        // Slide down slightly
         Animated.timing(searchResultsTranslateY, {
-          toValue: 0,
-          duration: 0,
+          toValue: 20,
+          duration: 250,
           useNativeDriver: true,
           easing: Easing.in(Easing.ease),
         }),
-      ]).start();
+      ]).start(() => {
+        // Update state after animation completes
+        setSearchResults(results);
+        setIsSearchActive(isActive);
+      });
     }
   };
 
@@ -299,19 +318,36 @@ const HomeScreen = () => {
                   data={searchResults}
                   keyExtractor={(item) => item.id}
                   renderItem={({ item, index }) => (
-                    <SearchResultItem
-                      item={item}
-                      onPress={handleResultPress}
-                      animatedStyle={{
-                        opacity: searchItemAnimations[index]?.opacity || 1,
+                    <Animated.View
+                      style={{
+                        opacity:
+                          index < searchItemAnimations.length
+                            ? searchItemAnimations[index].opacity
+                            : 1,
                         transform: [
                           {
                             translateY:
-                              searchItemAnimations[index]?.translateY || 0,
+                              index < searchItemAnimations.length
+                                ? searchItemAnimations[index].translateY
+                                : 0,
                           },
                         ],
                       }}
-                    />
+                    >
+                      <SearchResultItem
+                        item={item}
+                        onPress={handleResultPress}
+                        // animatedStyle={{
+                        //   opacity: searchItemAnimations[index]?.opacity || 1,
+                        //   transform: [
+                        //     {
+                        //       translateY:
+                        //         searchItemAnimations[index]?.translateY || 0,
+                        //     },
+                        //   ],
+                        // }}
+                      />
+                    </Animated.View>
                   )}
                 />
               </>
@@ -321,18 +357,35 @@ const HomeScreen = () => {
                   data={suggestedSearches}
                   keyExtractor={(item) => item.id}
                   renderItem={({ item, index }) => (
-                    <SearchResultItem
-                      item={item}
-                      onPress={handleResultPress}
-                      animatedStyle={{
-                        opacity: searchItemAnimations[index].opacity,
+                    <Animated.View
+                      style={{
+                        opacity:
+                          index < searchItemAnimations.length
+                            ? searchItemAnimations[index].opacity
+                            : 1,
                         transform: [
                           {
-                            translateY: searchItemAnimations[index].translateY,
+                            translateY:
+                              index < searchItemAnimations.length
+                                ? searchItemAnimations[index].translateY
+                                : 0,
                           },
                         ],
                       }}
-                    />
+                    >
+                      <SearchResultItem
+                        item={item}
+                        onPress={handleResultPress}
+                        // animatedStyle={{
+                        //   opacity: searchItemAnimations[index].opacity,
+                        //   transform: [
+                        //     {
+                        //       translateY: searchItemAnimations[index].translateY,
+                        //     },
+                        //   ],
+                        // }}
+                      />
+                    </Animated.View>
                   )}
                   // contentContainerStyle={styles.suggestedSearchContent}
                   showsVerticalScrollIndicator={false}

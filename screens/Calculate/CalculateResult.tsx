@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,8 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
+  Animated,
+  Easing,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import colors from "../../utils/colors";
@@ -14,12 +16,36 @@ import images from "../../utils/images";
 import Icon from "../../components/common/Icon";
 
 const CalculateResult = ({ route }: { route: any }) => {
-  const navigation = useNavigation();
-  // You can pass the calculated amount as a param when navigating to this screen
+  const navigation = useNavigation<any>();
   const { amount = "1460" } = route.params || {};
+  const [displayAmount, setDisplayAmount] = useState("0");
+  const amountValue = parseInt(amount, 10);
+  const animationProgress = useRef(new Animated.Value(0)).current;
+
+  // Effect to trigger the count-up animation when component mounts
+  useEffect(() => {
+    // Animate from 0 to 1 over 2 seconds
+    Animated.timing(animationProgress, {
+      toValue: 1,
+      duration: 2000, // 2 seconds
+      useNativeDriver: false,
+      easing: Easing.out(Easing.ease),
+    }).start();
+
+    // Update the displayed amount as the animation progresses
+    const listener = animationProgress.addListener(({ value }) => {
+      const currentAmount = Math.floor(value * amountValue);
+      setDisplayAmount(currentAmount.toString());
+    });
+
+    // Clean up listener when component unmounts
+    return () => {
+      animationProgress.removeListener(listener);
+    };
+  }, [amountValue]);
 
   const handleBackToHome = () => {
-    navigation.navigate("Home");
+    navigation.navigate("MainTabs");
   };
 
   return (
@@ -27,8 +53,8 @@ const CalculateResult = ({ route }: { route: any }) => {
       <View style={styles.content}>
         {/* Logo Section */}
         <View style={styles.logoContainer}>
-          <Icon name="truck" size={32} color={colors.secondaryColor} />
           <Text style={styles.logoText}>MoveMate</Text>
+          <Icon name="truck" size={32} color={colors.secondaryColor} />
         </View>
 
         {/* Box Image */}
@@ -43,23 +69,22 @@ const CalculateResult = ({ route }: { route: any }) => {
         {/* Result Section */}
         <View style={styles.resultContainer}>
           <Text style={styles.estimatedTitle}>Total Estimated Amount</Text>
-          <Text style={styles.estimatedAmount}>${amount} USD</Text>
+          <Text style={styles.estimatedAmount}>${displayAmount} USD</Text>
           <Text style={styles.disclaimer}>
             This amount is estimated, this will vary if you change your location
             or weight.
           </Text>
         </View>
-      </View>
 
-      {/* Button Section */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleBackToHome}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.buttonText}>Back to home</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleBackToHome}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.buttonText}>Back to home</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -82,8 +107,8 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   logoText: {
-    fontFamily: FONTFAMILY.bold,
-    fontSize: FONTSIZE.xl,
+    fontFamily: FONTFAMILY.boldItalic,
+    fontSize: FONTSIZE.xxxl,
     color: colors.primaryColor,
     marginLeft: 8,
   },
@@ -91,21 +116,21 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   boxImage: {
-    width: 150,
-    height: 150,
+    width: 200,
+    height: 200,
   },
   resultContainer: {
     alignItems: "center",
     width: "100%",
   },
   estimatedTitle: {
-    fontFamily: FONTFAMILY.bold,
-    fontSize: FONTSIZE.lg,
+    fontFamily: FONTFAMILY.medium,
+    fontSize: FONTSIZE.xl,
     color: colors.black,
     marginBottom: 12,
   },
   estimatedAmount: {
-    fontFamily: FONTFAMILY.bold,
+    fontFamily: FONTFAMILY.regular,
     fontSize: FONTSIZE.xxl,
     color: colors.green,
     marginBottom: 16,
@@ -115,11 +140,11 @@ const styles = StyleSheet.create({
     fontSize: FONTSIZE.md,
     color: colors.gray,
     textAlign: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 40,
   },
   buttonContainer: {
     width: "100%",
-    paddingHorizontal: 24,
+    paddingVertical: 24,
     paddingBottom: 24,
   },
   button: {

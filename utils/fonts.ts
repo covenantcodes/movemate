@@ -12,6 +12,7 @@ export const FONTFAMILY = {
   semibold: "DMSansSemiBold",
   heavy: "DMSansExtraBold",
   medium: "DMSansMedium",
+  boldItalic: "DMSansBoldItalic",
   specialMedium: "NotoSansMedium",
   specialSemiBold: "NotoSansSemiBold",
 };

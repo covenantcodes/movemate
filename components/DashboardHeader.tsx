@@ -78,16 +78,16 @@ const DashboardHeader = ({
       // Collapse header height
       Animated.timing(headerHeight, {
         toValue: 130,
-        duration: 600,
+        duration: 1000,
         useNativeDriver: false,
         easing: Easing.bezier(0.25, 0.1, 0.25, 1),
       }),
       // Move search bar up
       Animated.timing(searchBarTop, {
         toValue: 60,
-        duration: 600,
+        duration: 700,
         useNativeDriver: false,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+        easing: Easing.cubic,
       }),
       // Fade out profile section
       Animated.timing(profileOpacity, {

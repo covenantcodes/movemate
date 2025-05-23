@@ -18,6 +18,7 @@ export default function App() {
     DMSansRegular: require("./assets/fonts/DMSans-Regular.ttf"),
     DMSansSemiBold: require("./assets/fonts/DMSans-SemiBold.ttf"),
     DMSansBold: require("./assets/fonts/DMSans-Bold.ttf"),
+    DMSansBoldItalic: require("./assets/fonts/DMSans-BoldItalic.ttf"),
     DMSansExtraBold: require("./assets/fonts/DMSans-ExtraBold.ttf"),
     DMSansExtraBoldItalic: require("./assets/fonts/DMSans-ExtraBoldItalic.ttf"),
   });
