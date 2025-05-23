@@ -24,6 +24,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6fcc3706-a733-463e-ab76-4b093a4846bc"
+      }
+    },
+    "owner": "covenantcodes"
   }
 }
