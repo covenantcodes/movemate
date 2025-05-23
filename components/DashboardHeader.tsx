@@ -66,7 +66,7 @@ const DashboardHeader = ({
     ]).start();
   }, []);
 
-  // Handle search activation - SMOOTH VERSION (but stressful)
+  // Handle search activation - SMOOTH VERSION (but stressful to implement :( )
   const activateSearch = () => {
     setIsSearchActive(true);
 
@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === "ios" ? 12 : 8,
     paddingHorizontal: 12,
     flex: 1,
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -532,7 +532,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     paddingVertical: Platform.OS === "ios" ? 12 : 8,
     paddingHorizontal: 12,
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     paddingVertical: Platform.OS === "ios" ? 12 : 8,
     paddingHorizontal: 12,
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

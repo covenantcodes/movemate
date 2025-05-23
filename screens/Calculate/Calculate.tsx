@@ -19,24 +19,7 @@ import { FONTFAMILY, FONTSIZE } from "../../utils/fonts";
 import Icon from "../../components/common/Icon";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import images from "../../utils/images";
-
-const packageOptions = [
-  { id: "1", label: "Box" },
-  { id: "2", label: "Envelope" },
-  { id: "3", label: "Pallet" },
-  { id: "4", label: "Crate" },
-  { id: "5", label: "Tube" },
-];
-
-const categoryOptions = [
-  { id: "1", label: "Documents" },
-  { id: "2", label: "Glass" },
-  { id: "3", label: "Liquid" },
-  { id: "4", label: "Food" },
-  { id: "5", label: "Electronic" },
-  { id: "6", label: "Product" },
-  { id: "7", label: "Others" },
-];
+import { categoryOptions, packageOptions } from "../../data/data";
 
 const CalculateScreen = () => {
   const navigation = useNavigation<any>();
@@ -44,12 +27,10 @@ const CalculateScreen = () => {
   const [isPackageDropdownOpen, setIsPackageDropdownOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // Existing animation refs
   const backButtonX = useRef(new Animated.Value(-50)).current;
   const titleY = useRef(new Animated.Value(30)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  // New animation refs for content sections
   const destinationY = useRef(new Animated.Value(50)).current;
   const packagingY = useRef(new Animated.Value(50)).current;
   const categoryY = useRef(new Animated.Value(50)).current;
@@ -145,10 +126,7 @@ const CalculateScreen = () => {
   };
 
   const handleCategorySelect = (categoryId: string) => {
-    // Get the animation values for this category
     const animation = categoryAnimations[categoryId];
-
-    // Animate the button when selected
     Animated.sequence([
       // First quickly scale down
       Animated.timing(animation.scale, {
@@ -296,11 +274,10 @@ const CalculateScreen = () => {
         </View>
       </View>
 
-      {/* Content - Wrap entire content in Animated.View with opacity */}
       <Animated.View
         style={[
           styles.contentWrapper,
-          { opacity: contentFade }, // This hides all content initially
+          { opacity: contentFade }, // Covenant -  This hides all content initially
         ]}
       >
         <ScrollView

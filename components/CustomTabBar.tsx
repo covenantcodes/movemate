@@ -171,10 +171,9 @@ const CustomTabBar = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    // Adding shadow for better visual separation
     ...Platform.select({
       ios: {
-        shadowColor: "#000",
+        shadowColor: colors.black,
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.1,
         shadowRadius: 3,

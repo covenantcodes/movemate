@@ -1,5 +1,4 @@
-// User data file to store and manage user information
-import { ImageSourcePropType } from "react-native";
+
 import { UserData, Shipment, Vehicle } from "../types/global";
 import images from "../utils/images";
 
@@ -52,7 +51,23 @@ const vehicles: Vehicle[] = [
  
 ];
 
+const packageOptions = [
+  { id: "1", label: "Box" },
+  { id: "2", label: "Envelope" },
+  { id: "3", label: "Pallet" },
+  { id: "4", label: "Crate" },
+  { id: "5", label: "Tube" },
+];
+
+const categoryOptions = [
+  { id: "1", label: "Documents" },
+  { id: "2", label: "Glass" },
+  { id: "3", label: "Liquid" },
+  { id: "4", label: "Food" },
+  { id: "5", label: "Electronic" },
+  { id: "6", label: "Product" },
+  { id: "7", label: "Others" },
+];
 
 
-
-export { userData, shipments, vehicles};
+export { userData, shipments, vehicles, packageOptions, categoryOptions };

@@ -6,7 +6,7 @@ import { IconProps } from "../../types/global";
 const Icon: React.FC<IconProps> = ({
   name,
   size = 24,
-  color = "#000",
+  color = colors.black,
   style,
 }) => {
   return getIcon(name, { size, color, style });

@@ -1,44 +1,18 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import HomeScreen from "../screens/Home/Home";
-import CalculateScreen from "../screens/Calculate/Calculate";
-import CalculateResult from "../screens/Calculate/CalculateResult";
-import ShipmentScreen from "../screens/Shipments/Shipments";
-import ProfileScreen from "../screens/Profile/Profile";
+import MainNavigator from "./MainNavigator";
 import SearchPage from "../screens/Search/Search";
-
-import CustomTabBar from "../components/CustomTabBar";
+import CalculateResult from "../screens/Calculate/CalculateResult";
 
 const Stack = createStackNavigator();
-const Tab = createBottomTabNavigator();
-
-const MainTabs = () => {
-  return (
-    <Tab.Navigator
-      tabBar={(props) => <CustomTabBar {...props} />}
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarStyle: {
-          display: route.name === "Shipment" ? "none" : "flex",
-        },
-      })}
-    >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Calculate" component={CalculateScreen} />
-      <Tab.Screen name="Shipment" component={ShipmentScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-    </Tab.Navigator>
-  );
-};
 
 const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="MainTabs" component={MainTabs} />
+        <Stack.Screen name="MainTabs" component={MainNavigator} />
         <Stack.Screen name="Search" component={SearchPage} />
         <Stack.Screen name="CalculateResult" component={CalculateResult} />
       </Stack.Navigator>
