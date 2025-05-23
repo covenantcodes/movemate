@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     flexDirection: "row",
-    height: 70,
+    height: Platform.OS === "ios" ? 70 : 90,
     backgroundColor: colors.white,
     position: "relative",
   },

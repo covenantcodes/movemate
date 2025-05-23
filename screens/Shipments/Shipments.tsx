@@ -35,11 +35,11 @@ interface ShipmentItem {
 
 const FlatList = Animated.createAnimatedComponent(RawFlatList);
 
-const filterTabs: FilterTab[] = [
-  { id: "all", label: "All", count: 12 },
-  { id: "completed", label: "Completed", count: 5, status: "completed" },
-  { id: "in-progress", label: "In progress", count: 3, status: "in-progress" },
-  { id: "pending", label: "Pending", count: 4, status: "pending" },
+const filterTabsConfig: Omit<FilterTab, "count">[] = [
+  { id: "all", label: "All" },
+  { id: "completed", label: "Completed", status: "completed" },
+  { id: "in-progress", label: "In progress", status: "in-progress" },
+  { id: "pending", label: "Pending", status: "pending" },
 ];
 
 const mockShipments: ShipmentItem[] = [
@@ -129,11 +129,37 @@ const mockShipments: ShipmentItem[] = [
 const ShipmentsScreen = ({ navigation }: any) => {
   const [activeFilter, setActiveFilter] = useState("all");
   const [filteredShipments, setFilteredShipments] = useState(mockShipments);
+  const [filterTabs, setFilterTabs] = useState<FilterTab[]>([]);
 
   // Animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const scrollY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Calculate counts for each status
+    const counts = {
+      all: mockShipments.length,
+      completed: mockShipments.filter((item) => item.status === "completed")
+        .length,
+      "in-progress": mockShipments.filter(
+        (item) => item.status === "in-progress"
+      ).length,
+      pending: mockShipments.filter((item) => item.status === "pending").length,
+      loading: mockShipments.filter((item) => item.status === "loading").length,
+    };
+
+    // Create tabs with counts
+    const tabs = filterTabsConfig.map((tab) => ({
+      ...tab,
+      count:
+        tab.id === "all"
+          ? counts.all
+          : counts[tab.status as keyof typeof counts] || 0,
+    }));
+
+    setFilterTabs(tabs);
+  }, []);
 
   useEffect(() => {
     // Entrance animation
@@ -187,21 +213,30 @@ const ShipmentsScreen = ({ navigation }: any) => {
         onPress={() => handleFilterPress(item.id)}
         activeOpacity={0.7}
       >
-        <Text
-          style={[styles.filterTabText, isActive && styles.filterTabTextActive]}
-        >
-          {item.label}
-        </Text>
-        <View
-          style={[
-            styles.countContainer,
-            isActive && styles.countContainerActive,
-          ]}
-        >
-          <Text style={[styles.countText, isActive && styles.countTextActive]}>
-            {item.count}
+        <View style={styles.filterTabContent}>
+          <Text
+            style={[
+              styles.filterTabText,
+              isActive && styles.filterTabTextActive,
+            ]}
+          >
+            {item.label}
           </Text>
+          <View
+            style={[
+              styles.countContainer,
+              isActive && styles.countContainerActive,
+            ]}
+          >
+            <Text
+              style={[styles.countText, isActive && styles.countTextActive]}
+            >
+              {item.count}
+            </Text>
+          </View>
         </View>
+        {/* Underline for active tab */}
+        {isActive && <View style={styles.activeUnderline} />}
       </TouchableOpacity>
     );
   };
@@ -341,15 +376,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   filterTab: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
     marginRight: 12,
-    backgroundColor: "transparent",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   filterTabActive: {
-    // borderBottomWidth: 2,
-    // borderBottomColor: colors.secondaryColor,
+    // Additional styles for active state if needed
+  },
+  filterTabContent: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   filterTabText: {
     fontSize: FONTSIZE.lg,
@@ -379,6 +415,15 @@ const styles = StyleSheet.create({
   },
   countTextActive: {
     color: colors.white,
+  },
+  activeUnderline: {
+    position: "absolute",
+    bottom: 0,
+    left: 16,
+    right: 16,
+    height: 2,
+    backgroundColor: colors.secondaryColor,
+    borderRadius: 1,
   },
   contentContainer: {
     flex: 1,

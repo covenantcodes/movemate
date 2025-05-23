@@ -51,7 +51,7 @@ const TrackingCard: React.FC<TrackingCardProps> = ({
             <View style={styles.iconContainer}>
               <Image
                 source={images.send}
-                style={{ width: 38, height: 38 }}
+                style={{ width: 35, height: 35 }}
                 resizeMode="contain"
               />
             </View>
@@ -78,7 +78,7 @@ const TrackingCard: React.FC<TrackingCardProps> = ({
             <View style={[styles.iconContainer, styles.detailIconBox]}>
               <Image
                 source={images.receive}
-                style={{ width: 34, height: 34 }}
+                style={{ width: 33, height: 33 }}
                 resizeMode="contain"
               />
             </View>
@@ -149,8 +149,8 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   iconContainer: {
-    width: 45,
-    height: 45,
+    width: 40,
+    height: 40,
     borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
@@ -193,8 +193,8 @@ const styles = StyleSheet.create({
     color: colors.gray,
   },
   detailValue: {
-    fontFamily: FONTFAMILY.medium,
-    fontSize: FONTSIZE.lg,
+    fontFamily: FONTFAMILY.semibold,
+    fontSize: FONTSIZE.md,
     color: colors.black,
   },
   statusSection: {

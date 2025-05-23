@@ -107,21 +107,21 @@ const CalculateScreen = () => {
         Animated.timing(destinationY, {
           toValue: 0,
           duration: 800,
-          delay: 300,
+          // delay: 300,
           useNativeDriver: true,
           easing: Easing.out(Easing.ease),
         }),
         Animated.timing(packagingY, {
           toValue: 0,
           duration: 800,
-          delay: 500,
+          // delay: 500,
           useNativeDriver: true,
           easing: Easing.out(Easing.ease),
         }),
         Animated.timing(categoryY, {
           toValue: 0,
           duration: 800,
-          delay: 700,
+          // delay: 700,
           useNativeDriver: true,
           easing: Easing.out(Easing.ease),
         }),
@@ -262,6 +262,8 @@ const CalculateScreen = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
+      <StatusBar barStyle="light-content" />
+
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <Animated.View
@@ -294,13 +296,18 @@ const CalculateScreen = () => {
         </View>
       </View>
 
-      {/* Content */}
-      <View style={styles.contentWrapper}>
+      {/* Content - Wrap entire content in Animated.View with opacity */}
+      <Animated.View
+        style={[
+          styles.contentWrapper,
+          { opacity: contentFade }, // This hides all content initially
+        ]}
+      >
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1 }}
         >
-          <Animated.View style={[styles.content, { opacity: contentFade }]}>
+          <Animated.View style={styles.content}>
             {/* Destination Section */}
             <Animated.View
               style={[
@@ -444,7 +451,7 @@ const CalculateScreen = () => {
             </View>
           </Animated.View>
         </ScrollView>
-      </View>
+      </Animated.View>
 
       {/* Package Options Modal */}
       <Modal
