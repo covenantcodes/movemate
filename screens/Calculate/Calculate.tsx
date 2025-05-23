@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   StatusBar,
+  TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../../utils/colors";
@@ -41,7 +42,63 @@ const CalculateScreen = () => {
 
       {/* Content */}
       <View style={styles.content}>
-        <Text style={styles.text}>Calculate Screen Content</Text>
+        {/* Destination Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Destination</Text>
+
+          <View style={styles.inputsContainer}>
+            {/* First Input */}
+            <View style={styles.inputBox}>
+              <View style={styles.iconContainer}>
+                <Icon
+                  name="inboxArrowUp"
+                  size={27}
+                  color={colors.gray}
+                  style={styles.inputIcon}
+                />
+              </View>
+              <TextInput
+                style={styles.input}
+                placeholder="Sender location"
+                placeholderTextColor={colors.gray}
+              />
+            </View>
+
+            {/* Second Input */}
+            <View style={styles.inputBox}>
+              <View style={styles.iconContainer}>
+                <Icon
+                  name="inboxArrowDown"
+                  size={27}
+                  color={colors.gray}
+                  style={styles.inputIcon}
+                />
+              </View>
+              <TextInput
+                style={styles.input}
+                placeholder="Receiver location"
+                placeholderTextColor={colors.gray}
+              />
+            </View>
+
+            {/* Third Input */}
+            <View style={styles.inputBox}>
+              <View style={styles.iconContainer}>
+                <Icon
+                  name="scale"
+                  size={27}
+                  color={colors.gray}
+                  style={styles.inputIcon}
+                />
+              </View>
+              <TextInput
+                style={styles.input}
+                placeholder="Approx weight"
+                placeholderTextColor={colors.gray}
+              />
+            </View>
+          </View>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -78,13 +135,64 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   headerSpacer: {
-    width: 40, // Same width as backButton for alignment
+    width: 40,
   },
   content: {
+    paddingHorizontal: 16,
     flex: 1,
     backgroundColor: colors.background,
-    justifyContent: "center",
     alignItems: "center",
+  },
+  section: {
+    marginVertical: 20,
+    width: "100%",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 12,
+    marginBottom: 10,
+  },
+  sectionTitle: {
+    fontFamily: FONTFAMILY.semibold,
+    fontSize: FONTSIZE.lg,
+    color: colors.blue,
+    marginBottom: 10,
+  },
+  inputsContainer: {
+    width: "100%",
+    backgroundColor: colors.white,
+    shadowColor: colors.gray6,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    borderRadius: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    elevation: 3,
+  },
+  inputBox: {
+    flexDirection: "row",
+    // borderWidth: 1,
+    borderRadius: 16,
+    backgroundColor: colors.grayBg2,
+    marginVertical: 6,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+  },
+  iconContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRightWidth: 1,
+    borderColor: colors.gray6,
+  },
+  inputIcon: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
+    fontFamily: FONTFAMILY.medium,
+    fontSize: FONTSIZE.md,
+    color: colors.black,
+    marginLeft: 4,
   },
   text: {
     fontFamily: FONTFAMILY.medium,

@@ -54,6 +54,9 @@ export const IconMap = {
   arrowRight: { pack: "MaterialCommunityIcons", name: "arrow-right" },
   sync: { pack: "MaterialIcons", name: "sync" },
   progress: { pack: "MaterialCommunityIcons", name: "progress-pencil" },
+  scale: { pack: "MaterialIcons", name: "scale" },
+  inboxArrowUp: { pack: "MaterialCommunityIcons", name: "inbox-arrow-up" },
+  inboxArrowDown: { pack: "MaterialCommunityIcons", name: "inbox-arrow-down" },
 } as const;
 
 
