@@ -52,6 +52,7 @@ export const IconMap = {
   package: { pack: "Feather", name: "package" },
   arrowLeft: { pack: "MaterialIcons", name: "chevron-left" },
   arrowRight: { pack: "MaterialCommunityIcons", name: "arrow-right" },
+  sync: { pack: "MaterialIcons", name: "sync" },
 } as const;
 
 

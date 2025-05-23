@@ -13,6 +13,7 @@ export default function App() {
     DMSansExtraLight: require("./assets/fonts/DMSans-ExtraLight.ttf"),
     DMSansMedium: require("./assets/fonts/DMSans-Medium.ttf"),
     NotoSansMedium: require("./assets/fonts/NotoSans-Medium.ttf"),
+    NotoSansSemiBold: require("./assets/fonts/NotoSans-SemiBold.ttf"),
     DMSansMediumItalic: require("./assets/fonts/DMSans-MediumItalic.ttf"),
     DMSansRegular: require("./assets/fonts/DMSans-Regular.ttf"),
     DMSansSemiBold: require("./assets/fonts/DMSans-SemiBold.ttf"),

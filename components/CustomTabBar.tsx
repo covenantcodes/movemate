@@ -86,6 +86,14 @@ const CustomTabBar = ({
     }
   };
 
+  // Check if current route is Shipments - MOVE THIS AFTER ALL HOOKS
+  const currentRoute = state.routes[state.index];
+  const shouldHideTabBar = currentRoute.name === "Shipment";
+
+  if (shouldHideTabBar) {
+    return null;
+  }
+
   return (
     <Animated.View
       style={[

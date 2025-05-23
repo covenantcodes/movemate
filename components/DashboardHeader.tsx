@@ -18,6 +18,7 @@ import colors from "../utils/colors";
 import { FONTFAMILY, FONTSIZE } from "../utils/fonts";
 import { userData } from "../data/data";
 import Icon from "./common/Icon";
+import SearchResultItem from "./SearchResultItem";
 
 const { width } = Dimensions.get("window");
 
@@ -571,7 +572,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FONTFAMILY.regular,
     fontSize: FONTSIZE.md,
-    color: colors.black,
+    color: colors.gray,
     paddingVertical: 0,
   },
   searchInputActive: {

@@ -37,7 +37,7 @@ const SearchResultItem: React.FC<AnimatedSearchResultItemProps> = ({
           <Text style={styles.productName}>{item.productName}</Text>
 
           <View style={styles.detailRow}>
-            <Text style={styles.trackingNumber}>#{item.shipmentNumber}</Text>
+            <Text style={styles.trackingNumber}>{item.shipmentNumber}</Text>
             <Text style={styles.dot}>•</Text>
             <View style={styles.routeContainer}>
               <Text style={styles.cityText}>{item.sender.city}</Text>

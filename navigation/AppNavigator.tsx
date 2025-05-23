@@ -18,7 +18,12 @@ const MainTabs = () => {
   return (
     <Tab.Navigator
       tabBar={(props) => <CustomTabBar {...props} />}
-      screenOptions={{ headerShown: false }}
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarStyle: {
+          display: route.name === "Shipment" ? "none" : "flex",
+        },
+      })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Calculate" component={CalculateScreen} />

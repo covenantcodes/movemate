@@ -13,6 +13,7 @@ export const FONTFAMILY = {
   heavy: "DMSansExtraBold",
   medium: "DMSansMedium",
   specialMedium: "NotoSansMedium",
+  specialSemiBold: "NotoSansSemiBold",
 };
   
   export const FONTSIZE = {

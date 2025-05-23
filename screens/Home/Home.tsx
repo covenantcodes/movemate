@@ -23,28 +23,28 @@ const suggestedSearches = [
   {
     id: "sug1",
     productName: "Summer Linen Jacket",
-    shipmentNumber: "NE312367327",
+    shipmentNumber: "#NE312367327",
     sender: { city: "Madrid", code: "MAD" },
     receiver: { city: "Paris", code: "PAR" },
   },
   {
     id: "sug2",
     productName: "MacBook Pro M1",
-    shipmentNumber: "NE328940543",
+    shipmentNumber: "#NE328940543",
     sender: { city: "London", code: "LDN" },
     receiver: { city: "Berlin", code: "BER" },
   },
   {
     id: "sug3",
     productName: "Leather Office Chair",
-    shipmentNumber: "NE398275611",
+    shipmentNumber: "#NE398275611",
     sender: { city: "Barcelona", code: "BCN" },
     receiver: { city: "Rome", code: "ROM" },
   },
   {
     id: "sug4",
     productName: "Wireless Headphones",
-    shipmentNumber: "NE367219954",
+    shipmentNumber: "#NE367219954",
     sender: { city: "Amsterdam", code: "AMS" },
     receiver: { city: "Vienna", code: "VIE" },
   },
@@ -298,8 +298,20 @@ const HomeScreen = () => {
                 <FlatList
                   data={searchResults}
                   keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => (
-                    <SearchResultItem item={item} onPress={handleResultPress} />
+                  renderItem={({ item, index }) => (
+                    <SearchResultItem
+                      item={item}
+                      onPress={handleResultPress}
+                      animatedStyle={{
+                        opacity: searchItemAnimations[index]?.opacity || 1,
+                        transform: [
+                          {
+                            translateY:
+                              searchItemAnimations[index]?.translateY || 0,
+                          },
+                        ],
+                      }}
+                    />
                   )}
                 />
               </>
