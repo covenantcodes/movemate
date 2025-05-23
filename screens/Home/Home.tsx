@@ -27,7 +27,7 @@ const searchData = shipments.map((shipment) => ({
     "MacBook Pro M1",
     "PlayStation 5",
     "Samsung TV",
-  ][Math.floor(Math.random() * 4)], // Just for demo, assign random product names
+  ][Math.floor(Math.random() * 4)],
 }));
 
 const suggestedSearches = [
@@ -80,6 +80,7 @@ const HomeScreen = () => {
 
   // Animation for search results
   const searchResultsOpacity = useRef(new Animated.Value(0)).current;
+  const searchResultsTranslateY = useRef(new Animated.Value(0)).current;
 
   // Reference for ScrollView to track scroll position
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -97,24 +98,95 @@ const HomeScreen = () => {
   ).current;
 
   // Function to handle search results
+  // const handleSearchResults = (results: any[], isActive: boolean) => {
+  //   setSearchResults(results);
+  //   setIsSearchActive(isActive);
+
+  //   if (isActive) {
+  //     // Reset the search results to be invisible and positioned below
+  //     searchResultsOpacity.setValue(0);
+  //     searchResultsTranslateY.setValue(120);
+
+  //     // Wait 1 second after search bar animation starts, then animate search results
+  //     setTimeout(() => {
+  //       Animated.parallel([
+  //         // Fade in
+  //         Animated.timing(searchResultsOpacity, {
+  //           toValue: 1,
+  //           duration: 300,
+  //           useNativeDriver: true,
+  //         }),
+  //         // Slide up from below
+  //         Animated.timing(searchResultsTranslateY, {
+  //           toValue: 0,
+  //           duration: 350,
+  //           useNativeDriver: true,
+  //           easing: Easing.out(Easing.cubic),
+  //         }),
+  //       ]).start();
+  //     }, 1000); // 1 second delay
+  //   } else {
+  //     // Run animations in parallel when deactivating (no delay needed)
+  //     Animated.parallel([
+  //       // Fade out
+  //       Animated.timing(searchResultsOpacity, {
+  //         toValue: 0,
+  //         duration: 200,
+  //         useNativeDriver: true,
+  //       }),
+  //       // Slide down slightly
+  //       Animated.timing(searchResultsTranslateY, {
+  //         toValue: 120,
+  //         duration: 250,
+  //         useNativeDriver: true,
+  //         easing: Easing.in(Easing.cubic),
+  //       }),
+  //     ]).start();
+  //   }
+  // };
+
+  // Function to handle search results
   const handleSearchResults = (results: any[], isActive: boolean) => {
     setSearchResults(results);
     setIsSearchActive(isActive);
 
     if (isActive) {
-      // Fade in search results, fade out other content
-      Animated.timing(searchResultsOpacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
+      // Reset the search results to be invisible and positioned below
+
+      // Use Animated.timing with delay instead of setTimeout for better performance
+      Animated.parallel([
+        // Fade in with 1 second delay
+        Animated.timing(searchResultsOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        // Slide up below with 1 second delay
+        Animated.timing(searchResultsTranslateY, {
+          toValue: 0,
+          duration: 450,
+          delay: 900,
+          useNativeDriver: true,
+          easing: Easing.out(Easing.ease),
+        }),
+      ]).start();
     } else {
-      // Fade out search results
-      Animated.timing(searchResultsOpacity, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
+      // Run animations in parallel when deactivating (no delay needed)
+      Animated.parallel([
+        // Fade out
+        Animated.timing(searchResultsOpacity, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+        // Slide down slightly
+        Animated.timing(searchResultsTranslateY, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true,
+          easing: Easing.in(Easing.ease),
+        }),
+      ]).start();
     }
   };
 
@@ -199,9 +271,7 @@ const HomeScreen = () => {
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
     {
       useNativeDriver: true,
-      listener: (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-        // Additional scroll logic if needed
-      },
+      listener: (event: NativeSyntheticEvent<NativeScrollEvent>) => {},
     }
   );
 
@@ -237,32 +307,39 @@ const HomeScreen = () => {
       {/* Search Results - Show when search is active */}
       {isSearchActive ? (
         <Animated.View
-          style={[styles.searchResults, { opacity: searchResultsOpacity }]}
+          style={[
+            styles.searchResults,
+            {
+              opacity: searchResultsOpacity,
+              transform: [{ translateY: searchResultsTranslateY }],
+            },
+          ]}
         >
-          {searchResults.length > 0 ? (
-            // Show actual search results when available
-            <>
-              <FlatList
-                data={searchResults}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <SearchResultItem item={item} onPress={handleResultPress} />
-                )}
-                contentContainerStyle={styles.searchResultsContent}
-              />
-            </>
-          ) : (
-            <View style={styles.suggestedSearchContainer}>
-              <FlatList
-                data={suggestedSearches}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <SearchResultItem item={item} onPress={handleResultPress} />
-                )}
-                contentContainerStyle={styles.suggestedSearchContent}
-              />
-            </View>
-          )}
+          <View style={styles.searchResultsBox}>
+            {searchResults.length > 0 ? (
+              // Show actual search results when available
+              <>
+                <FlatList
+                  data={searchResults}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <SearchResultItem item={item} onPress={handleResultPress} />
+                  )}
+                />
+              </>
+            ) : (
+              <View style={styles.suggestedSearchContainer}>
+                <FlatList
+                  data={suggestedSearches}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <SearchResultItem item={item} onPress={handleResultPress} />
+                  )}
+                  contentContainerStyle={styles.suggestedSearchContent}
+                />
+              </View>
+            )}
+          </View>
         </Animated.View>
       ) : (
         // Normal Content - Show when search is not active
@@ -375,13 +452,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  searchResultsContent: {
-    paddingTop: 90,
-    paddingBottom: 24,
+  searchResultsBox: {
+    backgroundColor: colors.white,
+    marginHorizontal: 16,
+    marginTop: 9,
+    borderRadius: 20,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 6,
+    shadowRadius: 12,
   },
   suggestedSearchContainer: {
-    flex: 1,
-    paddingTop: 90,
+    // flex: 1,
   },
   suggestedSearchTitle: {
     fontFamily: FONTFAMILY.semibold,

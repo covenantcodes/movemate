@@ -1,67 +1,58 @@
-import React from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  Animated,
 } from "react-native";
 import colors from "../utils/colors";
 import { FONTFAMILY, FONTSIZE } from "../utils/fonts";
 import Icon from "./common/Icon";
-
-interface SearchResultItemProps {
-  item: {
-    id: string;
-    shipmentNumber: string;
-    productName: string;
-    sender: {
-      city: string;
-      code: string;
-    };
-    receiver: {
-      city: string;
-      code: string;
-    };
-  };
-  onPress: (id: string) => void;
-}
+import { SearchResultItemProps } from "../types/global";
 
 const { width } = Dimensions.get("window");
 
-const SearchResultItem: React.FC<SearchResultItemProps> = ({
+interface AnimatedSearchResultItemProps extends SearchResultItemProps {
+  animatedStyle?: any;
+}
+
+const SearchResultItem: React.FC<AnimatedSearchResultItemProps> = ({
   item,
   onPress,
+  animatedStyle,
 }) => {
   return (
-    <TouchableOpacity
-      style={styles.container}
-      activeOpacity={0.8}
-      onPress={() => onPress(item.id)}
-    >
-      <View style={styles.iconContainer}>
-        <Icon name="package" size={24} color={colors.white} />
-      </View>
+    <Animated.View style={animatedStyle}>
+      <TouchableOpacity
+        style={styles.container}
+        activeOpacity={0.8}
+        onPress={() => onPress(item.id)}
+      >
+        <View style={styles.iconContainer}>
+          <Icon name="package" size={24} color={colors.white} />
+        </View>
 
-      <View style={styles.contentContainer}>
-        <Text style={styles.productName}>{item.productName}</Text>
+        <View style={styles.contentContainer}>
+          <Text style={styles.productName}>{item.productName}</Text>
 
-        <View style={styles.detailRow}>
-          <Text style={styles.trackingNumber}>#{item.shipmentNumber}</Text>
-          <Text style={styles.dot}>•</Text>
-          <View style={styles.routeContainer}>
-            <Text style={styles.cityText}>{item.sender.city}</Text>
-            <Icon
-              name="arrowRight"
-              size={14}
-              color={colors.gray}
-              style={styles.routeArrow}
-            />
-            <Text style={styles.cityText}>{item.receiver.city}</Text>
+          <View style={styles.detailRow}>
+            <Text style={styles.trackingNumber}>#{item.shipmentNumber}</Text>
+            <Text style={styles.dot}>•</Text>
+            <View style={styles.routeContainer}>
+              <Text style={styles.cityText}>{item.sender.city}</Text>
+              <Icon
+                name="arrowLeft"
+                size={14}
+                color={colors.gray}
+                style={styles.routeArrow}
+              />
+              <Text style={styles.cityText}>{item.receiver.city}</Text>
+            </View>
           </View>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 
@@ -71,7 +62,6 @@ const styles = StyleSheet.create({
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
-
     width: width - 32,
     marginHorizontal: 10,
   },

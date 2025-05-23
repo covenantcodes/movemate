@@ -63,5 +63,22 @@ interface DashboardHeaderProps {
   searchData?: any[];
 }
 
+interface SearchResultItemProps {
+  item: {
+    id: string;
+    shipmentNumber: string;
+    productName: string;
+    sender: {
+      city: string;
+      code: string;
+    };
+    receiver: {
+      city: string;
+      code: string;
+    };
+  };
+  onPress: (id: string) => void;
+}
 
-export type { Shipment, IconProps, PulseIndicatorProps, UserData, TrackingCardProps, Vehicle, VehicleCardProps, DashboardHeaderProps };
+
+export type { Shipment, IconProps, PulseIndicatorProps, UserData, TrackingCardProps, Vehicle, VehicleCardProps, DashboardHeaderProps, SearchResultItemProps};

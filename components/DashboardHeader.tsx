@@ -158,7 +158,7 @@ const DashboardHeader = ({
         // Expand search bar width smoothly
         Animated.timing(searchBarWidth, {
           toValue: width - 32,
-          duration: 500, // Smooth width expansion
+          duration: 700, // Smooth width expansion
           useNativeDriver: false,
           easing: Easing.out(Easing.quad), // Smoother easing
         }),
@@ -166,7 +166,7 @@ const DashboardHeader = ({
         Animated.timing(profileOpacity, {
           toValue: 1,
           duration: 250,
-          delay: 100, // Small delay for better sequencing
+          delay: 200,
           useNativeDriver: true,
         }),
       ]).start(() => {
