@@ -10,6 +10,7 @@ import Entypo from "react-native-vector-icons/Entypo";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Octicons from "react-native-vector-icons/Octicons";
 import { IconProps } from '../types/global';
+import { ArrowRight } from 'lucide-react-native';
 
 
 // Export all icon packs with proper typing
@@ -50,6 +51,7 @@ export const IconMap = {
   history: { pack: "MaterialIcons", name: "history" },
   package: { pack: "Feather", name: "package" },
   arrowLeft: { pack: "MaterialIcons", name: "chevron-left" },
+  arrowRight: { pack: "MaterialCommunityIcons", name: "arrow-right" },
 } as const;
 
 

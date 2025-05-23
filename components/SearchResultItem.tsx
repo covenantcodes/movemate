@@ -42,7 +42,7 @@ const SearchResultItem: React.FC<AnimatedSearchResultItemProps> = ({
             <View style={styles.routeContainer}>
               <Text style={styles.cityText}>{item.sender.city}</Text>
               <Icon
-                name="arrowLeft"
+                name="arrowRight"
                 size={14}
                 color={colors.gray}
                 style={styles.routeArrow}
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   trackingNumber: {
     fontFamily: FONTFAMILY.regular,
     fontSize: FONTSIZE.sm,
-    color: colors.primaryColor,
+    color: colors.gray,
   },
   dot: {
     marginHorizontal: 6,

@@ -19,17 +19,6 @@ import VehicleCard from "../../components/VehicleCard";
 import SearchResultItem from "../../components/SearchResultItem";
 import { shipments, vehicles } from "../../data/data";
 
-// Extended data for search results with product names
-const searchData = shipments.map((shipment) => ({
-  ...shipment,
-  productName: [
-    "iPhone 13 Pro Max",
-    "MacBook Pro M1",
-    "PlayStation 5",
-    "Samsung TV",
-  ][Math.floor(Math.random() * 4)],
-}));
-
 const suggestedSearches = [
   {
     id: "sug1",
@@ -60,6 +49,8 @@ const suggestedSearches = [
     receiver: { city: "Vienna", code: "VIE" },
   },
 ];
+
+const searchData = suggestedSearches;
 
 const HomeScreen = () => {
   // State for search results
@@ -98,61 +89,12 @@ const HomeScreen = () => {
   ).current;
 
   // Function to handle search results
-  // const handleSearchResults = (results: any[], isActive: boolean) => {
-  //   setSearchResults(results);
-  //   setIsSearchActive(isActive);
-
-  //   if (isActive) {
-  //     // Reset the search results to be invisible and positioned below
-  //     searchResultsOpacity.setValue(0);
-  //     searchResultsTranslateY.setValue(120);
-
-  //     // Wait 1 second after search bar animation starts, then animate search results
-  //     setTimeout(() => {
-  //       Animated.parallel([
-  //         // Fade in
-  //         Animated.timing(searchResultsOpacity, {
-  //           toValue: 1,
-  //           duration: 300,
-  //           useNativeDriver: true,
-  //         }),
-  //         // Slide up from below
-  //         Animated.timing(searchResultsTranslateY, {
-  //           toValue: 0,
-  //           duration: 350,
-  //           useNativeDriver: true,
-  //           easing: Easing.out(Easing.cubic),
-  //         }),
-  //       ]).start();
-  //     }, 1000); // 1 second delay
-  //   } else {
-  //     // Run animations in parallel when deactivating (no delay needed)
-  //     Animated.parallel([
-  //       // Fade out
-  //       Animated.timing(searchResultsOpacity, {
-  //         toValue: 0,
-  //         duration: 200,
-  //         useNativeDriver: true,
-  //       }),
-  //       // Slide down slightly
-  //       Animated.timing(searchResultsTranslateY, {
-  //         toValue: 120,
-  //         duration: 250,
-  //         useNativeDriver: true,
-  //         easing: Easing.in(Easing.cubic),
-  //       }),
-  //     ]).start();
-  //   }
-  // };
-
-  // Function to handle search results
   const handleSearchResults = (results: any[], isActive: boolean) => {
     setSearchResults(results);
     setIsSearchActive(isActive);
 
     if (isActive) {
-      if (searchResultsOpacity._value === 0) {
-        // Reset search item animations
+      if (searchResults.length === 0) {
         searchItemAnimations.forEach((anim) => {
           anim.translateY.setValue(30);
           anim.opacity.setValue(0);
@@ -171,7 +113,7 @@ const HomeScreen = () => {
         Animated.timing(searchResultsTranslateY, {
           toValue: 0,
           duration: 450,
-          delay: 900,
+          delay: 500,
           useNativeDriver: true,
           easing: Easing.out(Easing.ease),
         }),
@@ -261,7 +203,7 @@ const HomeScreen = () => {
       Animated.timing(trackingTextY, {
         toValue: 0,
         duration: 500,
-        delay: 600, // Start after vehicles animation
+        delay: 600,
         useNativeDriver: true,
         easing: Easing.out(Easing.back(1.5)),
       }),
@@ -478,7 +420,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    padding: 20,
+    paddingLeft: 13,
+    paddingTop: 20,
+    paddingRight: 20,
   },
   sectionHeader: {
     // marginVertical: 16,
