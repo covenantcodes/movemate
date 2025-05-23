@@ -18,7 +18,7 @@ import colors from "../utils/colors";
 import { FONTFAMILY, FONTSIZE } from "../utils/fonts";
 import { userData } from "../data/data";
 import Icon from "./common/Icon";
-import SearchResultItem from "./SearchResultItem";
+import { useFocusEffect } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
@@ -47,6 +47,28 @@ const DashboardHeader = ({
   const backButtonTranslateX = useRef(new Animated.Value(-20)).current; // For back button translation
 
   const inputRef = useRef<TextInput>(null);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Reset animation values to their initial state
+      translateY.setValue(0); // No need for entrance animation when returning
+      fadeAnim.setValue(1);
+      headerHeight.setValue(200);
+      searchBarTop.setValue(120);
+      profileOpacity.setValue(1);
+      searchBarWidth.setValue(width - 32);
+
+      // Make sure search is deactivated when coming back to this screen
+      setIsSearchActive(false);
+      setSearchQuery("");
+
+      if (onSearchResults) {
+        onSearchResults([], false);
+      }
+
+      return () => {};
+    }, [])
+  );
 
   // Handle initial entrance animation
   useEffect(() => {

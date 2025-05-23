@@ -11,6 +11,7 @@ import {
   FlatList,
   Animated,
   Easing,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../../utils/colors";
@@ -42,9 +43,27 @@ const CalculateScreen = () => {
   const [selectedPackage, setSelectedPackage] = useState("Box");
   const [isPackageDropdownOpen, setIsPackageDropdownOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  // Existing animation refs
   const backButtonX = useRef(new Animated.Value(-50)).current;
   const titleY = useRef(new Animated.Value(30)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  // New animation refs for content sections
+  const destinationY = useRef(new Animated.Value(50)).current;
+  const packagingY = useRef(new Animated.Value(50)).current;
+  const categoryY = useRef(new Animated.Value(50)).current;
+  const contentFade = useRef(new Animated.Value(0)).current;
+
+  const categoryAnimations = useRef(
+    categoryOptions.reduce((acc, category) => {
+      acc[category.id] = {
+        scale: new Animated.Value(1),
+        opacity: new Animated.Value(1),
+      };
+      return acc;
+    }, {} as Record<string, { scale: Animated.Value; opacity: Animated.Value }>)
+  ).current;
 
   useFocusEffect(
     React.useCallback(() => {
@@ -52,9 +71,13 @@ const CalculateScreen = () => {
       backButtonX.setValue(-50);
       titleY.setValue(30);
       fadeAnim.setValue(0);
+      destinationY.setValue(50);
+      packagingY.setValue(50);
+      categoryY.setValue(50);
+      contentFade.setValue(0);
 
       Animated.parallel([
-        // Animate back button sliding in from left
+        // Header animations
         Animated.timing(backButtonX, {
           toValue: 0,
           duration: 600,
@@ -62,7 +85,6 @@ const CalculateScreen = () => {
           useNativeDriver: true,
           easing: Easing.out(Easing.back(1.5)),
         }),
-        // Animate title sliding up
         Animated.timing(titleY, {
           toValue: 0,
           duration: 600,
@@ -70,11 +92,38 @@ const CalculateScreen = () => {
           useNativeDriver: true,
           easing: Easing.out(Easing.back(1.2)),
         }),
-        // Fade in both elements
         Animated.timing(fadeAnim, {
           toValue: 1,
           duration: 600,
           useNativeDriver: true,
+        }),
+
+        // Content section animations - with increasing delays
+        Animated.timing(contentFade, {
+          toValue: 1,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+        Animated.timing(destinationY, {
+          toValue: 0,
+          duration: 800,
+          delay: 300,
+          useNativeDriver: true,
+          easing: Easing.out(Easing.ease),
+        }),
+        Animated.timing(packagingY, {
+          toValue: 0,
+          duration: 800,
+          delay: 500,
+          useNativeDriver: true,
+          easing: Easing.out(Easing.ease),
+        }),
+        Animated.timing(categoryY, {
+          toValue: 0,
+          duration: 800,
+          delay: 700,
+          useNativeDriver: true,
+          easing: Easing.out(Easing.ease),
         }),
       ]).start();
 
@@ -96,6 +145,42 @@ const CalculateScreen = () => {
   };
 
   const handleCategorySelect = (categoryId: string) => {
+    // Get the animation values for this category
+    const animation = categoryAnimations[categoryId];
+
+    // Animate the button when selected
+    Animated.sequence([
+      // First quickly scale down
+      Animated.timing(animation.scale, {
+        toValue: 0.9,
+        duration: 100,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.cubic),
+      }),
+      // Then scale up with a slight bounce
+      Animated.spring(animation.scale, {
+        toValue: 1,
+        friction: 4,
+        tension: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    if (selectedCategory === categoryId) {
+      Animated.sequence([
+        Animated.timing(animation.opacity, {
+          toValue: 0.7,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(animation.opacity, {
+          toValue: 1,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+
+    // Update state
     setSelectedCategory(categoryId === selectedCategory ? null : categoryId);
   };
 
@@ -133,37 +218,45 @@ const CalculateScreen = () => {
     item: { id: string; label: string };
   }) => {
     const isSelected = selectedCategory === item.id;
+    const animation = categoryAnimations[item.id];
 
     return (
-      <TouchableOpacity
-        style={[
-          styles.categoryButton,
-          isSelected
-            ? styles.selectedCategoryButton
-            : styles.unselectedCategoryButton,
-        ]}
-        onPress={() => handleCategorySelect(item.id)}
-        activeOpacity={0.7}
+      <Animated.View
+        style={{
+          transform: [{ scale: animation.scale }],
+          opacity: animation.opacity,
+        }}
       >
-        {isSelected && (
-          <Icon
-            name="checkMark"
-            size={16}
-            color={colors.white}
-            style={styles.categoryIcon}
-          />
-        )}
-        <Text
+        <TouchableOpacity
           style={[
-            styles.categoryButtonText,
+            styles.categoryButton,
             isSelected
-              ? styles.selectedCategoryText
-              : styles.unselectedCategoryText,
+              ? styles.selectedCategoryButton
+              : styles.unselectedCategoryButton,
           ]}
+          onPress={() => handleCategorySelect(item.id)}
+          activeOpacity={0.7}
         >
-          {item.label}
-        </Text>
-      </TouchableOpacity>
+          {isSelected && (
+            <Icon
+              name="checkMark"
+              size={16}
+              color={colors.white}
+              style={styles.categoryIcon}
+            />
+          )}
+          <Text
+            style={[
+              styles.categoryButtonText,
+              isSelected
+                ? styles.selectedCategoryText
+                : styles.unselectedCategoryText,
+            ]}
+          >
+            {item.label}
+          </Text>
+        </TouchableOpacity>
+      </Animated.View>
     );
   };
 
@@ -204,112 +297,155 @@ const CalculateScreen = () => {
       </View>
 
       {/* Content */}
-      <View style={styles.content}>
-        {/* Destination Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Destination</Text>
-
-          <View style={styles.inputsContainer}>
-            {/* First Input */}
-            <View style={styles.inputBox}>
-              <View style={styles.iconContainer}>
-                <Icon
-                  name="inboxArrowUp"
-                  size={27}
-                  color={colors.gray}
-                  style={styles.inputIcon}
-                />
-              </View>
-              <TextInput
-                style={styles.input}
-                placeholder="Sender location"
-                placeholderTextColor={colors.gray}
-              />
-            </View>
-
-            {/* Second Input */}
-            <View style={styles.inputBox}>
-              <View style={styles.iconContainer}>
-                <Icon
-                  name="inboxArrowDown"
-                  size={27}
-                  color={colors.gray}
-                  style={styles.inputIcon}
-                />
-              </View>
-              <TextInput
-                style={styles.input}
-                placeholder="Receiver location"
-                placeholderTextColor={colors.gray}
-              />
-            </View>
-
-            {/* Third Input */}
-            <View style={styles.inputBox}>
-              <View style={styles.iconContainer}>
-                <Icon
-                  name="scale"
-                  size={27}
-                  color={colors.gray}
-                  style={styles.inputIcon}
-                />
-              </View>
-              <TextInput
-                style={styles.input}
-                placeholder="Approx weight"
-                placeholderTextColor={colors.gray}
-              />
-            </View>
-          </View>
-        </View>
-
-        {/* Packaging Section */}
-        <View style={styles.packagingSection}>
-          <Text style={styles.sectionTitle}>Packaging</Text>
-          <Text style={styles.sectionDescription}>What are you sending?</Text>
-
-          <View style={styles.inputsContainer}>
-            {/* Dropdown Input */}
-            <TouchableOpacity
-              style={styles.inputBox}
-              onPress={togglePackageDropdown}
-              activeOpacity={0.8}
+      <View style={styles.contentWrapper}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ flexGrow: 1 }}
+        >
+          <Animated.View style={[styles.content, { opacity: contentFade }]}>
+            {/* Destination Section */}
+            <Animated.View
+              style={[
+                styles.section,
+                { transform: [{ translateY: destinationY }] },
+              ]}
             >
-              <View style={styles.iconContainer}>
-                <Image
-                  source={images.box}
-                  style={styles.packageIcon}
-                  resizeMode="contain"
+              <Text style={styles.sectionTitle}>Destination</Text>
+
+              <View style={styles.inputsContainer}>
+                {/* First Input */}
+                <View style={styles.inputBox}>
+                  <View style={styles.iconContainer}>
+                    <Icon
+                      name="inboxArrowUp"
+                      size={27}
+                      color={colors.gray}
+                      style={styles.inputIcon}
+                    />
+                  </View>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Sender location"
+                    placeholderTextColor={colors.gray}
+                  />
+                </View>
+
+                {/* Second Input */}
+                <View style={styles.inputBox}>
+                  <View style={styles.iconContainer}>
+                    <Icon
+                      name="inboxArrowDown"
+                      size={27}
+                      color={colors.gray}
+                      style={styles.inputIcon}
+                    />
+                  </View>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Receiver location"
+                    placeholderTextColor={colors.gray}
+                  />
+                </View>
+
+                {/* Third Input */}
+                <View style={styles.inputBox}>
+                  <View style={styles.iconContainer}>
+                    <Icon
+                      name="scale"
+                      size={27}
+                      color={colors.gray}
+                      style={styles.inputIcon}
+                    />
+                  </View>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Approx weight"
+                    placeholderTextColor={colors.gray}
+                  />
+                </View>
+              </View>
+            </Animated.View>
+
+            {/* Packaging Section */}
+            <Animated.View
+              style={[
+                styles.packagingSection,
+                { transform: [{ translateY: packagingY }] },
+              ]}
+            >
+              <Text style={styles.sectionTitle}>Packaging</Text>
+              <Text style={styles.sectionDescription}>
+                What are you sending?
+              </Text>
+
+              <View style={styles.inputsContainer}>
+                {/* Dropdown Input */}
+                <TouchableOpacity
+                  style={styles.inputBox}
+                  onPress={togglePackageDropdown}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.iconContainer}>
+                    <Image
+                      source={images.box}
+                      style={styles.packageIcon}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <Text style={styles.dropdownText}>{selectedPackage}</Text>
+                  <Icon
+                    name={isPackageDropdownOpen ? "chevronUp" : "chevronDown"}
+                    size={18}
+                    color={colors.gray}
+                    style={styles.dropdownIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+            </Animated.View>
+
+            {/* Categories Section */}
+            <Animated.View
+              style={[
+                styles.section,
+                { transform: [{ translateY: categoryY }] },
+              ]}
+            >
+              <Text style={styles.sectionTitle}>Categories</Text>
+              <Text style={styles.sectionDescription}>
+                What are you sending?
+              </Text>
+
+              <View style={styles.categoriesContainer}>
+                <FlatList
+                  data={categoryOptions}
+                  renderItem={renderCategoryItem}
+                  keyExtractor={(item) => item.id}
+                  horizontal={false}
+                  numColumns={3}
+                  scrollEnabled={false}
+                  contentContainerStyle={styles.categoriesList}
                 />
               </View>
-              <Text style={styles.dropdownText}>{selectedPackage}</Text>
-              <Icon
-                name={isPackageDropdownOpen ? "chevronUp" : "chevronDown"}
-                size={18}
-                color={colors.gray}
-                style={styles.dropdownIcon}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
+            </Animated.View>
 
-        {/* Categories Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Categories</Text>
-          <Text style={styles.sectionDescription}>What are you sending?</Text>
-
-          <View style={styles.categoriesContainer}>
-            <FlatList
-              data={categoryOptions}
-              renderItem={renderCategoryItem}
-              keyExtractor={(item) => item.id}
-              horizontal={false}
-              numColumns={3}
-              scrollEnabled={false}
-              contentContainerStyle={styles.categoriesList}
-            />
-          </View>
-        </View>
+            {/* Calculate Button */}
+            <View style={styles.calculateButtonWrapper}>
+              <TouchableOpacity
+                style={[
+                  styles.calculateButton,
+                  { backgroundColor: colors.secondaryColor },
+                ]}
+                activeOpacity={0.8}
+                onPress={() => {
+                  // Add your calculation logic here
+                  console.log("Calculate pressed");
+                }}
+              >
+                <Text style={styles.calculateButtonText}>Calculate</Text>
+              </TouchableOpacity>
+            </View>
+          </Animated.View>
+        </ScrollView>
       </View>
 
       {/* Package Options Modal */}
@@ -371,6 +507,10 @@ const styles = StyleSheet.create({
   headerSpacer: {
     width: 40,
   },
+  contentWrapper: {
+    flex: 1,
+    backgroundColor: colors.primaryColor,
+  },
   content: {
     flex: 1,
     backgroundColor: colors.background,
@@ -381,7 +521,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   sectionDescription: {
     fontFamily: FONTFAMILY.regular,
@@ -452,9 +592,9 @@ const styles = StyleSheet.create({
   dropdownText: {
     flex: 1,
     fontFamily: FONTFAMILY.medium,
-    fontSize: FONTSIZE.lg,
+    fontSize: FONTSIZE.md,
     color: colors.black,
-    marginLeft: 4,
+    marginLeft: 9,
   },
   dropdownIcon: {
     marginLeft: 8,
@@ -532,6 +672,31 @@ const styles = StyleSheet.create({
   },
   categoryIcon: {
     marginRight: 6,
+  },
+
+  calculateButtonWrapper: {
+    width: "100%",
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+  calculateButton: {
+    backgroundColor: colors.secondaryColor,
+    borderRadius: 25,
+    height: 56,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    shadowColor: colors.secondaryColor,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  calculateButtonText: {
+    fontFamily: FONTFAMILY.bold,
+    fontSize: FONTSIZE.lg,
+    color: colors.white,
+    textAlign: "center",
   },
 });
 
