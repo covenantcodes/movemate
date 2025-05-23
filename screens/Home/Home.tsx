@@ -151,7 +151,13 @@ const HomeScreen = () => {
     setIsSearchActive(isActive);
 
     if (isActive) {
-      // Reset the search results to be invisible and positioned below
+      if (searchResultsOpacity._value === 0) {
+        // Reset search item animations
+        searchItemAnimations.forEach((anim) => {
+          anim.translateY.setValue(30);
+          anim.opacity.setValue(0);
+        });
+      }
 
       // Use Animated.timing with delay instead of setTimeout for better performance
       Animated.parallel([
@@ -169,7 +175,28 @@ const HomeScreen = () => {
           useNativeDriver: true,
           easing: Easing.out(Easing.ease),
         }),
-      ]).start();
+      ]).start(() => {
+        // After container animation, animate individual items
+        const itemAnimations = searchItemAnimations.map((anim, index) =>
+          Animated.parallel([
+            Animated.timing(anim.opacity, {
+              toValue: 1,
+              duration: 200,
+              delay: index * 50, // Stagger animation
+              useNativeDriver: true,
+            }),
+            Animated.timing(anim.translateY, {
+              toValue: 0,
+              duration: 250,
+              delay: index * 50,
+              useNativeDriver: true,
+              easing: Easing.out(Easing.quad),
+            }),
+          ])
+        );
+
+        Animated.parallel(itemAnimations).start();
+      });
     } else {
       // Run animations in parallel when deactivating (no delay needed)
       Animated.parallel([
@@ -280,6 +307,13 @@ const HomeScreen = () => {
     animateContent();
   }, []);
 
+  const searchItemAnimations = useRef(
+    suggestedSearches.map(() => ({
+      translateY: new Animated.Value(30),
+      opacity: new Animated.Value(0),
+    }))
+  ).current;
+
   const handleResultPress = (id: string) => {
     console.log(`Search result pressed: ${id}`);
     // Navigate to shipment details or handle the press
@@ -332,10 +366,22 @@ const HomeScreen = () => {
                 <FlatList
                   data={suggestedSearches}
                   keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => (
-                    <SearchResultItem item={item} onPress={handleResultPress} />
+                  renderItem={({ item, index }) => (
+                    <SearchResultItem
+                      item={item}
+                      onPress={handleResultPress}
+                      animatedStyle={{
+                        opacity: searchItemAnimations[index].opacity,
+                        transform: [
+                          {
+                            translateY: searchItemAnimations[index].translateY,
+                          },
+                        ],
+                      }}
+                    />
                   )}
-                  contentContainerStyle={styles.suggestedSearchContent}
+                  // contentContainerStyle={styles.suggestedSearchContent}
+                  showsVerticalScrollIndicator={false}
                 />
               </View>
             )}
