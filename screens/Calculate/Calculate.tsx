@@ -435,8 +435,8 @@ const CalculateScreen = () => {
                 ]}
                 activeOpacity={0.8}
                 onPress={() => {
-                  // Add your calculation logic here
-                  console.log("Calculate pressed");
+                  // Pass your calculated amount to the result screen
+                  navigation.navigate("CalculateResult", { amount: "1460" });
                 }}
               >
                 <Text style={styles.calculateButtonText}>Calculate</Text>

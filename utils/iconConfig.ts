@@ -60,6 +60,7 @@ export const IconMap = {
   chevronDown: { pack: "MaterialIcons", name: "keyboard-arrow-down" },
   chevronUp: { pack: "MaterialIcons", name: "keyboard-arrow-up" },
   checkMark: { pack: "MaterialIcons", name: "check" },
+  truck: { pack: "MaterialCommunityIcons", name: "truck-fast-outline" },
 } as const;
 
 

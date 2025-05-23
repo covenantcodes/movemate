@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import HomeScreen from "../screens/Home/Home";
 import CalculateScreen from "../screens/Calculate/Calculate";
+import CalculateResult from "../screens/Calculate/CalculateResult";
 import ShipmentScreen from "../screens/Shipments/Shipments";
 import ProfileScreen from "../screens/Profile/Profile";
 import SearchPage from "../screens/Search/Search";
