@@ -57,6 +57,9 @@ export const IconMap = {
   scale: { pack: "MaterialIcons", name: "scale" },
   inboxArrowUp: { pack: "MaterialCommunityIcons", name: "inbox-arrow-up" },
   inboxArrowDown: { pack: "MaterialCommunityIcons", name: "inbox-arrow-down" },
+  chevronDown: { pack: "MaterialIcons", name: "keyboard-arrow-down" },
+  chevronUp: { pack: "MaterialIcons", name: "keyboard-arrow-up" },
+  checkMark: { pack: "MaterialIcons", name: "check" },
 } as const;
 
 

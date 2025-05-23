@@ -88,7 +88,8 @@ const CustomTabBar = ({
 
   // Check if current route is Shipments - MOVE THIS AFTER ALL HOOKS
   const currentRoute = state.routes[state.index];
-  const shouldHideTabBar = currentRoute.name === "Shipment";
+  const shouldHideTabBar =
+    currentRoute.name === "Shipment" || currentRoute.name === "Calculate";
 
   if (shouldHideTabBar) {
     return null;
