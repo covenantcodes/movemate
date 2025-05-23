@@ -26,43 +26,99 @@ interface ShipmentCardProps {
   };
   delay?: number;
   onPress?: () => void;
+  scrollY?: Animated.Value;
+  index?: number;
+  onLayout?: (event: any, index: number) => void;
 }
 
 const ShipmentCard: React.FC<ShipmentCardProps> = ({
   shipment,
   delay = 0,
   onPress,
+  scrollY,
+  index = 0,
+  onLayout,
 }) => {
   const translateY = useRef(new Animated.Value(30)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.95)).current;
+  const cardY = useRef(0);
 
+  const handleLayout = (event: any) => {
+    cardY.current = event.nativeEvent.layout.y;
+    if (onLayout) {
+      onLayout(event, index);
+    }
+  };
+
+  // Scroll-based animation
   useEffect(() => {
-    Animated.parallel([
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration: 600,
-        delay,
-        useNativeDriver: true,
-        easing: Easing.out(Easing.back(1.2)),
-      }),
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 600,
-        delay,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scale, {
-        toValue: 1,
-        duration: 600,
-        delay,
-        useNativeDriver: true,
-        easing: Easing.out(Easing.back(1.2)),
-      }),
-    ]).start();
-  }, [delay]);
+    if (scrollY) {
+      const inputRange = [
+        cardY.current - 200,
+        cardY.current - 100,
+        cardY.current + 100,
+      ];
+      const outputRange = [30, 0, -30];
+      const opacityRange = [0, 1, 0.3];
+      const scaleRange = [0.8, 1, 0.9];
 
-  type IconName = "sync" | "history" | "package" | "plus" | "search";
+      const animatedTranslateY = scrollY.interpolate({
+        inputRange,
+        outputRange,
+        extrapolate: "clamp",
+      });
+
+      const animatedOpacity = scrollY.interpolate({
+        inputRange,
+        outputRange: opacityRange,
+        extrapolate: "clamp",
+      });
+
+      const animatedScale = scrollY.interpolate({
+        inputRange,
+        outputRange: scaleRange,
+        extrapolate: "clamp",
+      });
+
+      // Apply animations
+      translateY.setValue(0); // Reset to 0 since we're using interpolated values
+      opacity.setValue(1);
+      scale.setValue(1);
+    } else {
+      // Fallback to original animation if no scrollY provided
+      Animated.parallel([
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 600,
+          delay,
+          useNativeDriver: true,
+          easing: Easing.out(Easing.back(1.2)),
+        }),
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 600,
+          delay,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scale, {
+          toValue: 1,
+          duration: 600,
+          delay,
+          useNativeDriver: true,
+          easing: Easing.out(Easing.back(1.2)),
+        }),
+      ]).start();
+    }
+  }, [delay, scrollY]);
+
+  type IconName =
+    | "sync"
+    | "history"
+    | "package"
+    | "plus"
+    | "search"
+    | "progress";
 
   const getStatusConfig = (
     status: string
@@ -89,14 +145,14 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({
         };
       case "loading":
         return {
-          color: colors.primaryColor,
+          color: colors.lightBlue,
           backgroundColor: colors.grayBg2,
           text: "Loading",
-          icon: "package", // box icon for loading
+          icon: "progress", // box icon for loading
         };
       case "completed":
         return {
-          color: colors.blue,
+          color: colors.primaryColor,
           backgroundColor: colors.grayBg2,
           text: "Completed",
           icon: "plus", // checkmark or completed icon
@@ -113,15 +169,49 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({
 
   const statusConfig = getStatusConfig(shipment.status);
 
+  const getAnimatedStyle = () => {
+    if (scrollY) {
+      const inputRange = [
+        cardY.current - 200,
+        cardY.current - 100,
+        cardY.current + 100,
+      ];
+
+      return {
+        opacity: scrollY.interpolate({
+          inputRange,
+          outputRange: [0, 1, 0.3],
+          extrapolate: "clamp",
+        }),
+        transform: [
+          {
+            translateY: scrollY.interpolate({
+              inputRange,
+              outputRange: [30, 0, -30],
+              extrapolate: "clamp",
+            }),
+          },
+          {
+            scale: scrollY.interpolate({
+              inputRange,
+              outputRange: [0.8, 1, 0.9],
+              extrapolate: "clamp",
+            }),
+          },
+        ],
+      };
+    }
+
+    return {
+      opacity,
+      transform: [{ translateY }, { scale }],
+    };
+  };
+
   return (
     <Animated.View
-      style={[
-        styles.container,
-        {
-          opacity,
-          transform: [{ translateY }, { scale }],
-        },
-      ]}
+      style={[styles.container, getAnimatedStyle()]}
+      onLayout={handleLayout}
     >
       <TouchableOpacity
         style={styles.card}
@@ -159,12 +249,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({
               </Text>
               <View style={styles.routeContainer}>
                 <Text style={styles.routeText}>from {shipment.origin}</Text>
-                {/* <Icon
-                  name="arrowRight"
-                  size={12}
-                  color={colors.gray}
-                  style={styles.arrowIcon}
-                /> */}
+
                 <Text style={styles.routeText}>{shipment.destination}</Text>
               </View>
             </View>
@@ -181,7 +266,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({
           {/* Package Icon */}
           <View style={styles.iconContainer}>
             <Image
-              source={images.truck}
+              source={images.box}
               style={styles.packageIcon}
               resizeMode="contain"
             />
@@ -279,8 +364,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   packageIcon: {
-    width: 40,
-    height: 40,
+    width: 80,
+    height: 80,
     opacity: 0.7,
   },
 });

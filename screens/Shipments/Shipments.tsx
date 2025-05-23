@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
+  FlatList as RawFlatList,
   Animated,
   Easing,
 } from "react-native";
@@ -32,6 +32,8 @@ interface ShipmentItem {
   date: string;
   status: "in-progress" | "pending" | "loading" | "completed";
 }
+
+const FlatList = Animated.createAnimatedComponent(RawFlatList);
 
 const filterTabs: FilterTab[] = [
   { id: "all", label: "All", count: 12 },
@@ -131,6 +133,7 @@ const ShipmentsScreen = ({ navigation }: any) => {
   // Animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Entrance animation
@@ -213,8 +216,15 @@ const ShipmentsScreen = ({ navigation }: any) => {
     <ShipmentCard
       shipment={item}
       delay={index * 100}
+      scrollY={scrollY.current}
+      index={index}
       onPress={() => console.log("Shipment pressed:", item.id)}
     />
+  );
+
+  const handleScroll = Animated.event(
+    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+    { useNativeDriver: true }
   );
 
   return (
@@ -223,7 +233,7 @@ const ShipmentsScreen = ({ navigation }: any) => {
 
       {/* Header */}
       <View style={styles.header}>
-        <SafeAreaView>
+        <View style={{ paddingTop: 50, paddingBottom: 10 }}>
           <Animated.View
             style={[
               styles.headerContent,
@@ -245,7 +255,7 @@ const ShipmentsScreen = ({ navigation }: any) => {
 
             <View style={styles.headerSpacer} />
           </Animated.View>
-        </SafeAreaView>
+        </View>
 
         {/* Filter Tabs - Now part of purple header */}
         <Animated.View
@@ -283,6 +293,8 @@ const ShipmentsScreen = ({ navigation }: any) => {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.shipmentsList}
           showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
         />
       </Animated.View>
     </View>
@@ -301,7 +313,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     paddingTop: 5,
   },
   backButton: {

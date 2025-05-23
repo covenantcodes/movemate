@@ -53,6 +53,7 @@ export const IconMap = {
   arrowLeft: { pack: "MaterialIcons", name: "chevron-left" },
   arrowRight: { pack: "MaterialCommunityIcons", name: "arrow-right" },
   sync: { pack: "MaterialIcons", name: "sync" },
+  progress: { pack: "MaterialCommunityIcons", name: "progress-pencil" },
 } as const;
 
 
