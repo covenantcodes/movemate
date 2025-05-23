@@ -91,5 +91,25 @@ interface SearchResultItemProps {
   Profile: undefined;
 };
 
+interface FilterTab {
+  id: string;
+  label: string;
+  count: number;
+  status?: string;
+}
 
-export type { Shipment, IconProps, PulseIndicatorProps, UserData, TrackingCardProps, Vehicle, VehicleCardProps, DashboardHeaderProps, SearchResultItemProps, RootStackParamList,   };
+interface ShipmentItem {
+  id: string;
+  title: string;
+  trackingNumber: string;
+  origin: string;
+  destination: string;
+  price: number;
+  date: string;
+  status: "in-progress" | "pending" | "loading" | "completed";
+}
+
+
+
+
+export type { Shipment, IconProps, PulseIndicatorProps, UserData, TrackingCardProps, Vehicle, VehicleCardProps, DashboardHeaderProps, SearchResultItemProps, RootStackParamList, ShipmentItem, FilterTab };

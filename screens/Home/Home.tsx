@@ -19,37 +19,7 @@ import VehicleCard from "../../components/VehicleCard";
 import SearchResultItem from "../../components/SearchResultItem";
 import { shipments, vehicles } from "../../data/data";
 import { useFocusEffect } from "@react-navigation/native";
-
-const suggestedSearches = [
-  {
-    id: "sug1",
-    productName: "Summer Linen Jacket",
-    shipmentNumber: "#NE312367327",
-    sender: { city: "Madrid", code: "MAD" },
-    receiver: { city: "Paris", code: "PAR" },
-  },
-  {
-    id: "sug2",
-    productName: "MacBook Pro M1",
-    shipmentNumber: "#NE328940543",
-    sender: { city: "London", code: "LDN" },
-    receiver: { city: "Berlin", code: "BER" },
-  },
-  {
-    id: "sug3",
-    productName: "Leather Office Chair",
-    shipmentNumber: "#NE398275611",
-    sender: { city: "Barcelona", code: "BCN" },
-    receiver: { city: "Rome", code: "ROM" },
-  },
-  {
-    id: "sug4",
-    productName: "Wireless Headphones",
-    shipmentNumber: "#NE367219954",
-    sender: { city: "Amsterdam", code: "AMS" },
-    receiver: { city: "Vienna", code: "VIE" },
-  },
-];
+import { suggestedSearches } from "../../data/data";
 
 const searchData = suggestedSearches;
 
@@ -180,7 +150,6 @@ const HomeScreen = () => {
 
   // Function to start the animations
   const animateContent = () => {
-    // Animation sequences as before...
     // First animate the "Available vehicles" section header
     Animated.parallel([
       Animated.timing(vehiclesSectionY, {
@@ -312,7 +281,6 @@ const HomeScreen = () => {
         >
           <View style={styles.searchResultsBox}>
             {searchResults.length > 0 ? (
-              // Show actual search results when available
               <>
                 <FlatList
                   data={searchResults}
@@ -337,15 +305,6 @@ const HomeScreen = () => {
                       <SearchResultItem
                         item={item}
                         onPress={handleResultPress}
-                        // animatedStyle={{
-                        //   opacity: searchItemAnimations[index]?.opacity || 1,
-                        //   transform: [
-                        //     {
-                        //       translateY:
-                        //         searchItemAnimations[index]?.translateY || 0,
-                        //     },
-                        //   ],
-                        // }}
                       />
                     </Animated.View>
                   )}
@@ -376,14 +335,6 @@ const HomeScreen = () => {
                       <SearchResultItem
                         item={item}
                         onPress={handleResultPress}
-                        // animatedStyle={{
-                        //   opacity: searchItemAnimations[index].opacity,
-                        //   transform: [
-                        //     {
-                        //       translateY: searchItemAnimations[index].translateY,
-                        //     },
-                        //   ],
-                        // }}
                       />
                     </Animated.View>
                   )}

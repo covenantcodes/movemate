@@ -17,6 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import Icon from "../../components/common/Icon";
 import colors from "../../utils/colors";
 import { FONTFAMILY, FONTSIZE } from "../../utils/fonts";
+import { recentSearches } from "../../data/data";
 
 const { width, height } = Dimensions.get("window");
 
@@ -32,14 +33,6 @@ const SearchPage = () => {
   const backdropOpacity = useRef(new Animated.Value(0)).current;
 
   const inputRef = useRef<TextInput>(null);
-
-  // Sample recent searches - would be stored in app state or async storage
-  const recentSearches = [
-    "NEJ20089934122231",
-    "NEJ20089934122232",
-    "MNO17438923770",
-    "KLM45678901234",
-  ];
 
   // Start search mode
   const expandSearchBar = () => {
