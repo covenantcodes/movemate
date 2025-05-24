@@ -9,6 +9,7 @@ const images = {
     truck: require('../assets/images/truck.png'),
     airplane: require('../assets/images/airplane.png'),
     box: require('../assets/images/box.png'),
+    icon : require('../assets/icon.png'),
 }
 
 export default images;

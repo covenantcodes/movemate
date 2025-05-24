@@ -23,6 +23,7 @@ const colors = {
   blueBg: '#E3F2FD',
     green: '#4fc96f',
     greenBg: '#DAF0E0',
+    iconBg: '#6A458F'
   };
   
   export default colors;

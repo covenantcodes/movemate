@@ -1,11 +1,18 @@
-import { StyleSheet, View } from "react-native";
+import React, { useState, useCallback, useEffect } from "react";
+import { StatusBar, View, StyleSheet } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
+
+import AppNavigator from "./navigation/AppNavigator";
+import CustomSplashScreen from "./components/SplashScreen";
 import PulseIndicator from "./components/common/PulseIndicator";
 
 import colors from "./utils/colors";
-import AppNavigator from "./navigation/AppNavigator";
 
 export default function App() {
+  const [isReady, setIsReady] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const [fontsLoaded] = useFonts({
     DMSansThin: require("./assets/fonts/DMSans-Thin.ttf"),
     DMSansThinItalic: require("./assets/fonts/DMSans-ThinItalic.ttf"),
@@ -23,6 +30,44 @@ export default function App() {
     DMSansExtraBoldItalic: require("./assets/fonts/DMSans-ExtraBoldItalic.ttf"),
   });
 
+  // Use this function to hide the splash screen when ready
+  const onFinishSplash = useCallback(async () => {
+    try {
+      // Hide the splash screen
+      await SplashScreen.hideAsync();
+      // Now show your app
+      setShowSplash(false);
+    } catch (e) {
+      console.warn(e);
+    }
+  }, []);
+
+  // Load any resources or data needed for your app
+  useEffect(() => {
+    async function prepare() {
+      try {
+        // Pre-load fonts, make API calls, etc.
+        // Artificially delay for a smoother startup experience
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // Tell the application to render
+        setIsReady(true);
+      }
+    }
+
+    prepare();
+  }, []);
+
+  if (!isReady) {
+    return null;
+  }
+
+  if (showSplash) {
+    return <CustomSplashScreen onFinish={onFinishSplash} />;
+  }
+
   if (!fontsLoaded) {
     return (
       <View style={styles.loadingContainer}>
@@ -31,7 +76,16 @@ export default function App() {
     );
   }
 
-  return <AppNavigator />;
+  return (
+    <SafeAreaProvider>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent
+      />
+      <AppNavigator />
+    </SafeAreaProvider>
+  );
 }
 
 const styles = StyleSheet.create({
